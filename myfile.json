@@ -1,0 +1,1 @@
+{"users":{"1":{"id":1,"firstName":"Vasya","lastName":"Vasya","username":"Vasya.Utkin","password":"1234567890","active":false}},"trainees":{"1":{"id":1,"dateOfBirt":null,"user":{"id":1,"firstName":"Vasya","lastName":"Vasya","username":"Vasya.Utkin","password":"1234567890","active":false},"address":null}},"trainers":{},"trainings":{}}
