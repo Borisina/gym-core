@@ -1,3 +1,0 @@
-2023-12-27 16:36:26,590 [main] INFO  Config:26 - Application context is ready!
-2023-12-27 16:36:26,627 [main] INFO  Config:37 - Trainee created! Trainee{id=1, dateOfBirt=null, Address='null', user=User{id=1, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev', password='frz7Gi5udn', isActive=true}}
-2023-12-27 16:36:26,629 [main] INFO  Config:37 - Trainee created! Trainee{id=2, dateOfBirt=null, Address='null', user=User{id=2, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev1', password='icgQSuOdM2', isActive=true}}

@@ -1,5 +1,6 @@
 package com.kolya.gym.facade;
 
+import com.kolya.gym.data.TrainingCriteria;
 import com.kolya.gym.data.TrainingData;
 import com.kolya.gym.domain.*;
 import com.kolya.gym.service.TrainingService;
@@ -8,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
+import static com.kolya.gym.validation.CommonValidation.nullValidation;
 
 @Component
 public class TrainingFacade {
@@ -23,7 +26,8 @@ public class TrainingFacade {
 
     public Training createTraining(TrainingData trainingData){
         try{
-            trainingData.isValid();
+            nullValidation(trainingData);
+            trainingData.validate();
             Training training = trainingService.create(trainingData);
             logger.info("Training created. " + training);
             return training;
@@ -47,5 +51,33 @@ public class TrainingFacade {
     public List<Training> getAllTrainings(){
         logger.info("Get all trainings." );
         return trainingService.getAll();
+    }
+
+    public List<Training> getByTraineeUsernameAndCriteria(String username, TrainingCriteria trainingCriteria){
+        try{
+            nullValidation(username);
+            if (trainingCriteria!=null){
+                trainingCriteria.validate();
+            }
+            logger.info("Get trainings by trainee's username and criteria.");
+            return trainingService.getByTraineeUsernameAndCriteria(username,trainingCriteria);
+        }catch (IllegalArgumentException e){
+            logger.info(e.getMessage());
+            return null;
+        }
+    }
+
+    public List<Training> getByTrainerUsernameAndCriteria(String username, TrainingCriteria trainingCriteria){
+        try{
+            nullValidation(username);
+            if (trainingCriteria!=null){
+                trainingCriteria.validate();
+            }
+            logger.info("Get trainings by trainer's username and criteria.");
+            return trainingService.getByTrainerUsernameAndCriteria(username,trainingCriteria);
+        }catch (IllegalArgumentException e){
+            logger.info(e.getMessage());
+            return null;
+        }
     }
 }

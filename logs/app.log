@@ -1,0 +1,37 @@
+2024-01-05 01:33:03,591 INFO o.s.d.r.c.RepositoryConfigurationDelegate [main] Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2024-01-05 01:33:03,783 INFO o.s.d.r.c.RepositoryConfigurationDelegate [main] Finished Spring Data repository scanning in 142 ms. Found 4 JPA repository interfaces.
+2024-01-05 01:33:04,482 INFO o.h.j.i.u.LogHelper [main] HHH000204: Processing PersistenceUnitInfo [name: default]
+2024-01-05 01:33:04,797 INFO o.h.Version [main] HHH000412: Hibernate ORM core version 6.4.1.Final
+2024-01-05 01:33:05,007 INFO o.h.c.i.RegionFactoryInitiator [main] HHH000026: Second-level cache disabled
+2024-01-05 01:33:06,050 INFO o.s.o.j.p.SpringPersistenceUnitInfo [main] No LoadTimeWeaver setup: ignoring JPA class transformer
+2024-01-05 01:33:06,818 WARN o.h.o.deprecation [main] HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2024-01-05 01:33:09,143 INFO o.h.e.t.j.p.i.JtaPlatformInitiator [main] HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2024-01-05 01:33:09,542 INFO o.s.o.j.LocalContainerEntityManagerFactoryBean [main] Initialized JPA EntityManagerFactory for persistence unit 'default'
+2024-01-05 01:33:10,350 INFO o.s.d.j.r.q.QueryEnhancerFactory [main] Hibernate is in classpath; If applicable, HQL parser will be used.
+2024-01-05 01:33:11,282 INFO c.k.g.c.Config [main] Application context is ready!
+2024-01-05 01:33:11,284 INFO c.k.g.c.Config [main] Wrong parameter 'lastName': can't be empty
+2024-01-05 01:33:11,290 INFO c.k.g.c.Config [main] Wrong parameter 'firstName' = Nikolay5: forbidden symbols
+2024-01-05 01:33:11,817 INFO c.k.g.c.Config [main] Trainee created. Trainee{id=1, dateOfBirth=null, Address='null', user=User{id=1, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev', isActive=true}}
+2024-01-05 01:33:11,931 INFO c.k.g.c.Config [main] Trainee created. Trainee{id=2, dateOfBirth=null, Address='null', user=User{id=2, firstName='Vasiliy', lastName='Palkin', username='Vasiliy.Palkin', isActive=true}}
+2024-01-05 01:33:12,347 INFO c.k.g.c.Config [main] Password changed for user: User{id=1, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev', isActive=true}
+2024-01-05 01:33:12,438 INFO c.k.g.c.Config [main] Get trainee by id. Trainee{id=1, dateOfBirth=null, Address='null', user=User{id=1, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev', isActive=true}}
+2024-01-05 01:33:12,529 INFO c.k.g.c.Config [main] Trainee created. Trainee{id=3, dateOfBirth=null, Address='null', user=User{id=3, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev1', isActive=true}}
+2024-01-05 01:33:12,530 INFO c.k.g.c.Config [main] Get allTrainees.
+2024-01-05 01:33:12,709 INFO c.k.g.c.Config [main] Trainee id can't be <=0
+2024-01-05 01:33:12,709 INFO c.k.g.c.Config [main] Get allTrainees.
+2024-01-05 01:33:12,794 INFO c.k.g.c.Config [main] Wrong parameter 'specialization': can't be empty
+2024-01-05 01:33:12,794 INFO c.k.g.c.Config [main] Get allTrainers.
+2024-01-05 01:33:12,957 INFO c.k.g.c.Config [main] Trainer created.Trainer{id=1, specialization='Super trainer', user=User{id=4, firstName='Genadiy', lastName='Tokov', username='Genadiy.Tokov', isActive=true}}
+2024-01-05 01:33:12,957 INFO c.k.g.c.Config [main] Get allTrainers.
+2024-01-05 01:33:13,297 INFO c.k.g.c.Config [main] Training created. Training{id=1, trainer=Trainer{id=1, specialization='Super trainer', user=User{id=4, firstName='Genadiy', lastName='Tokov', username='Genadiy.Tokov', isActive=true}}, trainee=Trainee{id=1, dateOfBirth=null, Address='null', user=User{id=1, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev', isActive=true}}, trainingName='Training Name 1', trainingType=TYPE_1, trainingDate=Fri Jan 05 01:33:13 YEKT 2024, duration=24}
+2024-01-05 01:33:13,297 INFO c.k.g.c.Config [main] Get all trainings.
+2024-01-05 01:33:13,672 INFO c.k.g.c.Config [main] There is no trainer with id = 5
+2024-01-05 01:33:13,672 INFO c.k.g.c.Config [main] Get all trainings.
+2024-01-05 01:33:13,760 INFO c.k.g.c.Config [main] Get all trainings.
+2024-01-05 01:33:14,043 INFO c.k.g.c.Config [main] Trainee deleted. Trainee{id=1, dateOfBirth=null, Address='null', user=User{id=1, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev', isActive=true}}
+2024-01-05 01:33:14,043 INFO c.k.g.c.Config [main] Get all trainings.
+2024-01-05 01:33:14,877 INFO c.k.g.c.Config [main] Training created. Training{id=2, trainer=Trainer{id=1, specialization='Super trainer', user=User{id=4, firstName='Genadiy', lastName='Tokov', username='Genadiy.Tokov', isActive=true}}, trainee=Trainee{id=3, dateOfBirth=null, Address='null', user=User{id=3, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev1', isActive=true}}, trainingName='Training Name 2', trainingType=TYPE_2, trainingDate=Fri Jan 05 01:33:14 YEKT 2024, duration=12}
+2024-01-05 01:33:15,212 INFO c.k.g.c.Config [main] Training created. Training{id=3, trainer=Trainer{id=1, specialization='Super trainer', user=User{id=4, firstName='Genadiy', lastName='Tokov', username='Genadiy.Tokov', isActive=true}}, trainee=Trainee{id=3, dateOfBirth=null, Address='null', user=User{id=3, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev1', isActive=true}}, trainingName='Training Name 3', trainingType=TYPE_3, trainingDate=Fri Jan 05 01:33:14 YEKT 2024, duration=24}
+2024-01-05 01:33:15,442 INFO c.k.g.c.Config [main] Training created. Training{id=4, trainer=Trainer{id=1, specialization='Super trainer', user=User{id=4, firstName='Genadiy', lastName='Tokov', username='Genadiy.Tokov', isActive=true}}, trainee=Trainee{id=3, dateOfBirth=null, Address='null', user=User{id=3, firstName='Nikolay', lastName='Alexeev', username='Nikolay.Alexeev1', isActive=true}}, trainingName='Training Name 3', trainingType=TYPE_3, trainingDate=Fri Jan 05 01:33:15 YEKT 2024, duration=36}
+2024-01-05 01:33:15,442 INFO c.k.g.c.Config [main] Get all trainings.
+2024-01-05 01:33:15,529 INFO c.k.g.c.Config [main] Get trainings by trainee's username and criteria.

@@ -1,23 +1,26 @@
-<Configuration status="debug" name="baeldung" packages="">
+<Configuration status="info" name="baeldung" packages="">
     <Appenders>
         <Console name="stdout" target="SYSTEM_OUT">
             <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss} %p %m%n"/>
         </Console>
-        <File name="file" fileName="logs.log" append="true">
+        <RollingFile name="file" fileName="logs/app.log"
+                     filePattern="logs/$${date:yyyy-MM}/app-%d{MM-dd-yyyy}-%i.log.gz">
             <PatternLayout>
-                <Pattern>%d{yyyy-MM-dd HH:mm:ss} %-5p %m%n</Pattern>
+                <Pattern>%d %p %c{1.} [%t] %m%n</Pattern>
             </PatternLayout>
-        </File>
-    </Appenders>
+            <Policies>
+                <TimeBasedTriggeringPolicy />
+                <SizeBasedTriggeringPolicy size="2MB"/>
+            </Policies>
 
+            <DefaultRolloverStrategy max="10"/>
+
+        </RollingFile>
+    </Appenders>
     <Loggers>
+
         <Root level="info">
             <AppenderRef ref="file" />
-            <AppenderRef ref="stdout" />
-        </Root>
-        <Root level="trace">
-            <AppenderRef ref="file" />
-            <AppenderRef ref="stdout" />
         </Root>
     </Loggers>
 </Configuration>
