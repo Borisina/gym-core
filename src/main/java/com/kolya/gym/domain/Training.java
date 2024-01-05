@@ -1,13 +1,34 @@
 package com.kolya.gym.domain;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.util.Date;
 
+@Entity
 public class Training{
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+
+    @ManyToOne
+    @JoinColumn(name="trainer_id")
     private Trainer trainer;
+
+    @ManyToOne
+    @JoinColumn(name="trainee_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Trainee trainee;
     private String trainingName;
+
+    //@ElementCollection(targetClass = TrainingType.class, fetch = FetchType.EAGER)
+    //@CollectionTable(name = "training_type", joinColumns = @JoinColumn(name = "training_id"))
+    @Enumerated(EnumType.STRING)
     private TrainingType trainingType;
+
+    @Temporal(TemporalType.DATE)
     private Date trainingDate;
     private int duration;
 

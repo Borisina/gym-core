@@ -1,62 +1,79 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.dao.TrainerDao;
 import com.kolya.gym.data.TrainerData;
-import com.kolya.gym.domain.*;
+import com.kolya.gym.domain.Trainer;
+import com.kolya.gym.domain.User;
+import com.kolya.gym.repo.TrainerRepo;
+import com.kolya.gym.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 public class TrainerService {
 
-    private final TrainerDao trainerDao;
+    private final TrainerRepo trainerRepo;
+    private final UserService userService;
+    private final UserRepo userRepo;
 
     @Autowired
-    public TrainerService(TrainerDao trainerDao) {
-        this.trainerDao = trainerDao;
+    public TrainerService(TrainerRepo trainerRepo, UserService userService, UserRepo userRepo) {
+        this.trainerRepo = trainerRepo;
+        this.userService = userService;
+        this.userRepo = userRepo;
     }
 
-    public Trainer create(TrainerData trainerData, User user){
-        Trainer trainer = getTrainerFromData(trainerData);
-        trainer.setUser(user);
-        return trainerDao.create(trainer);
+    @Transactional
+    public Trainer create(TrainerData trainerData){
+        Trainer trainer = getTrainerFromDataForCreate(trainerData);
+        return trainerRepo.save(trainer);
     }
 
-    public Trainer update(TrainerData trainerData, User user, long trainerId) throws IllegalArgumentException{
-        Trainer trainer = get(trainerId);
-        trainer.setUser(user);
-        if (trainerData.getSpecialization()!=null && !trainerData.getSpecialization().isBlank()){
-            trainer.setSpecialization(trainerData.getSpecialization());
+    @Transactional
+    public Trainer update(TrainerData trainerData, long id) throws IllegalArgumentException{
+        Trainer updatedTrainer = getTrainerFromDataForUpdate(trainerData);
+        Trainer trainer = trainerRepo.findById(id).orElseThrow(()->new IllegalArgumentException("There is no trainer with id = "+id));
+        if(updatedTrainer.getSpecialization()!=null){
+            trainer.setSpecialization(updatedTrainer.getSpecialization());
         }
-        trainerDao.update(trainer);
+        userService.change(trainer.getUser(),updatedTrainer.getUser());
+        trainer = trainerRepo.save(trainer);
         return trainer;
     }
 
     public Trainer get(long id) throws IllegalArgumentException{
-        Trainer trainer = trainerDao.get(id);
-        if (trainer==null){
-            throw new IllegalArgumentException("There is no trainer with id = "+id);
-        }
-        return trainer;
+        return trainerRepo.findById(id).orElseThrow(()->new IllegalArgumentException("There is no trainer with id = "+id));
     }
 
-    public Trainer getTrainerFromData(TrainerData data){
-        Trainer trainer = new Trainer();
-        trainer.setSpecialization(data.getSpecialization());
-        return trainer;
-    }
-
-    public Trainer delete(long id) throws IllegalArgumentException{
-        Trainer trainer = trainerDao.delete(id);
-        if (trainer==null){
-            throw new IllegalArgumentException("There is no trainer with id = "+id);
-        }
-        return trainer;
+    @Transactional
+    public Trainer getByUsername(String username) throws IllegalArgumentException {
+        User user = userRepo.findByUsername(username).orElseThrow(()-> new IllegalArgumentException("There is no user with username = "+username));
+        return trainerRepo.findByUserId(user.getId()).orElseThrow(()->new IllegalArgumentException("There is no user with id = "+user.getId()));
     }
 
     public List<Trainer> getAll() {
-        return trainerDao.getAll();
+        return trainerRepo.findAll();
+    }
+
+    public Trainer getTrainerFromData(TrainerData trainerData){
+        Trainer trainer = new Trainer();
+        trainer.setSpecialization(trainerData.getSpecialization());
+        return trainer;
+    }
+
+    private Trainer getTrainerFromDataForCreate(TrainerData trainerData){
+        Trainer trainer = getTrainerFromData(trainerData);
+        User user = userService.generateUser(trainerData);
+        trainer.setUser(user);
+        return trainer;
+    }
+
+    private Trainer getTrainerFromDataForUpdate(TrainerData trainerData){
+        Trainer trainer = getTrainerFromData(trainerData);
+        User user = userService.generateUserForUpdate(trainerData);
+        trainer.setUser(user);
+        return trainer;
     }
 }

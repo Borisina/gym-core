@@ -1,12 +1,12 @@
 package com.kolya.gym.data;
 
 
-public class TrainerData extends UserData {
+public class TrainerData extends UserData{
     private String specialization;
 
-    public void isValid() throws IllegalArgumentException{
+    public void validate() throws IllegalArgumentException{
         if (specialization==null || specialization.isBlank()) throw new IllegalArgumentException("Wrong parameter 'specialization': can't be empty");
-        super.isValid();
+        super.validate();
     }
 
     public String getSpecialization() {

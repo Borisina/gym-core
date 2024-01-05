@@ -1,33 +1,28 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.dao.UserDao;
+import com.kolya.gym.data.AuthData;
+import com.kolya.gym.data.UserData;
 import com.kolya.gym.domain.User;
+import com.kolya.gym.repo.UserRepo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import javax.naming.AuthenticationException;
 
 @Service
 public class UserService {
 
-    private final UserDao userDao;
+    private final UserRepo userRepo;
 
     @Autowired
-    public UserService(UserDao userDao) {
-        this.userDao = userDao;
+    public UserService(UserRepo userRepo) {
+        this.userRepo = userRepo;
     }
 
-    public User create(String firstName, String lastName) {
-        User user = generateUser(firstName,lastName);
-        return userDao.create(user);
-    }
-
-    public User delete(long id) {
-        return userDao.delete(id);
-    }
-
-    private User generateUser(String firstName, String lastName){
+    public User generateUser(UserData userData){
+        String firstName = userData.getFirstName();
+        String lastName = userData.getLastName();
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -37,16 +32,18 @@ public class UserService {
         return user;
     }
 
-    private String generateUsername(String firstName, String lastName){
-        String username = firstName+"."+lastName;
-        String usernameForRegex = firstName+"\\."+lastName;
-        int count = 0;
-        List<User> userList = userDao.getAll();
-        for (User userFromList:userList){
-            if (userFromList.getUsername().matches(usernameForRegex+"[0-9]*")){
-                count++;
-            }
-        }
+    public User generateUserForUpdate(UserData userData){
+        String firstName = userData.getFirstName();
+        String lastName = userData.getLastName();
+        User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        return user;
+    }
+
+    public String generateUsername(String firstName, String lastName){
+        String username = firstName+"."+ lastName;
+        long count = userRepo.countDuplicates(firstName,lastName);
         if (count!=0){
             username=username+count;
         }
@@ -54,23 +51,53 @@ public class UserService {
     }
 
 
-    private String generatePassword(){
+    private String generatePassword() {
         return RandomStringUtils.random(10, true, true);
     }
 
-    public User update(String firstName, String lastName, long id) {
-        User user = userDao.get(id);
+    public void change(User user, User updatedUser){
+        boolean isUpdated = false;
+        if (updatedUser!=null){
+            if (updatedUser.getFirstName()!=null){
+                user.setFirstName(updatedUser.getFirstName());
+                isUpdated=true;
+            }
+            if (updatedUser.getLastName()!=null){
+                user.setLastName(updatedUser.getLastName());
+                isUpdated=true;
+            }
+            if (isUpdated){
+                user.setUsername(generateUsername(user.getFirstName(),user.getLastName()));
+            }
+        }
+    }
+
+    public void changePassword(User user, String newPassword){
+        user.setPassword(newPassword);
+        userRepo.save(user);
+    }
+
+    public User authenticate(AuthData authData) throws AuthenticationException{
+        User user = userRepo.findByUsernameAndPassword(authData.getUsername(),authData.getPassword());
         if (user==null){
-            throw new IllegalArgumentException("There is no user with id = "+id);
+            throw new AuthenticationException("Authentication Exception.");
         }
-        if (!firstName.isBlank()){
-            user.setFirstName(firstName);
-        }
-        if (!lastName.isBlank()){
-            user.setLastName(lastName);
-        }
-        user.setUsername(generateUsername(user.getFirstName(),user.getLastName()));
-        userDao.update(user);
         return user;
+    }
+
+    public boolean changeActiveStatus(long id){
+        if (id<=0){
+            throw new IllegalArgumentException("Wrong parameter id: cant be <=0");
+        }
+        User user = userRepo.findById(id).orElseThrow(()-> new IllegalArgumentException("There is no user with id = "+id));
+        boolean newStatus = !user.isActive();
+        user.setActive(newStatus);
+        userRepo.save(user);
+        if (newStatus){
+            System.out.println("User (id = "+id+") activated.");
+        }else{
+            System.out.println("User (id = "+id+") deactivated.");
+        }
+        return newStatus;
     }
 }

@@ -1,6 +1,13 @@
 package com.kolya.gym.domain;
 
+
+import jakarta.persistence.*;
+
+@Entity
+@Table(name="usr")
 public class User{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String firstName;
     private String lastName;
