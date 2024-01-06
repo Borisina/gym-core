@@ -35,6 +35,7 @@ public class TrainerFacade {
             Optional.ofNullable(trainerData).orElseThrow(()->new IllegalArgumentException("TrainerData is null"));
             trainerData.validate();
         }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }

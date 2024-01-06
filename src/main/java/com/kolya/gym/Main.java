@@ -15,6 +15,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.Date;
+import java.util.Optional;
 
 
 public class Main {
@@ -44,15 +45,17 @@ public class Main {
         trainee = traineeFacade.getTrainee(1);
         System.out.println(trainee.getUser().getPassword());
         authData.setPassword("password");
+
         traineeFacade.createTrainee(traineeData3);
         System.out.println(traineeFacade.getAllTrainees());
 
 
         TraineeDataUpdate traineeDataUpdate = new TraineeDataUpdate();
-        traineeDataUpdate.setFirstName("");
         traineeDataUpdate.setLastName("Ivanov");
+        traineeDataUpdate.setId(2);
         traineeFacade.updateTrainee(authData,traineeDataUpdate);
         System.out.println(traineeFacade.getAllTrainees());
+
 
         TrainerData trainerDataWrong = new TrainerDataBuilder().setFirstName("Genadiy").setLastName("Tokov").setSpecialization("   ").build();
         trainerFacade.createTrainer(trainerDataWrong);
@@ -66,6 +69,7 @@ public class Main {
                 .setTraineeId(1)
                 .setTrainerId(1)
                 .setDuration(24)
+                .setTrainingName("Training Name 0")
                 .setTrainingType(TrainingType.TYPE_1)
                 .setTrainingDate(new Date())
                 .build();
@@ -85,7 +89,6 @@ public class Main {
         trainingFacade.createTraining(trainingDataWrong);
         System.out.println(trainingFacade.getAllTrainings());
 
-        System.out.println(trainingFacade.getAllTrainings());
         traineeFacade.deleteByUsername(authData,"Nikolay.Alexeev");
         System.out.println(trainingFacade.getAllTrainings());
 
@@ -114,7 +117,7 @@ public class Main {
                 .setTrainingName("Training Name 3")
                 .setTrainingDate(new Date())
                 .build();
-        trainingFacade.createTraining(trainingData2);
+        trainingFacade.createTraining(trainingData3);
 
         TrainingData trainingData4 = new TrainingDataBuilder()
                 .setTraineeId(3)
@@ -124,7 +127,7 @@ public class Main {
                 .setTrainingName("Training Name 3")
                 .setTrainingDate(new Date())
                 .build();
-        trainingFacade.createTraining(trainingData2);
+        trainingFacade.createTraining(trainingData4);
         System.out.println(trainingFacade.getAllTrainings());
 
         TrainingCriteria trainingCriteria = new TrainingCriteria();
