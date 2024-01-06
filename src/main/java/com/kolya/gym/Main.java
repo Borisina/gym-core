@@ -1,6 +1,5 @@
 package com.kolya.gym;
 
-
 import com.kolya.gym.config.Config;
 import com.kolya.gym.data.*;
 import com.kolya.gym.domain.Trainee;
@@ -12,6 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import static com.kolya.gym.prepareddata.PreparedData.*;
+import java.util.Date;
 
 
 public class Main {
@@ -23,6 +23,7 @@ public class Main {
         TrainingFacade trainingFacade = context.getBean(TrainingFacade.class);
 
         logger.info("Application context is ready!");
+
 
         TraineeData wrongTraineeData = wrongTraineeDataList.get(0);
         traineeFacade.createTrainee(wrongTraineeData);
@@ -42,6 +43,7 @@ public class Main {
         System.out.println(trainee.getUser().getPassword());
         authData.setPassword("password");
 
+
         traineeFacade.createTrainee(traineeData);
         System.out.println(traineeFacade.getAllTrainees());
 
@@ -51,6 +53,7 @@ public class Main {
         traineeDataUpdate.setId(2);
         traineeFacade.updateTrainee(authData,traineeDataUpdate);
         System.out.println(traineeFacade.getAllTrainees());
+
 
 
         TrainerData wrongTrainerData = wrongTrainerDataList.get(0);
@@ -67,6 +70,7 @@ public class Main {
 
 
 
+
         TrainingData wrongTrainingData = wrongTrainingDataList.get(0);
         trainingFacade.createTraining(wrongTrainingData);
         System.out.println(trainingFacade.getAllTrainings());
@@ -79,6 +83,7 @@ public class Main {
         traineeFacade.changeActiveStatus(2);
 
         System.out.println(traineeFacade.getNotAssignedTrainees());
+
 
 
         TrainingData trainingData2 = trainingDataList.get(1);
