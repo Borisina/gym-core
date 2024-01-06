@@ -14,8 +14,9 @@ import org.springframework.stereotype.Component;
 
 import javax.naming.AuthenticationException;
 import java.util.List;
+import java.util.Optional;
 
-import static com.kolya.gym.validation.CommonValidation.nullValidation;
+import static com.kolya.gym.validation.CommonValidation.validateId;
 
 @Component
 public class TraineeFacade {
@@ -33,7 +34,7 @@ public class TraineeFacade {
 
     public Trainee createTrainee(TraineeData traineeData){
         try{
-            nullValidation(traineeData);
+            Optional.ofNullable(traineeData).orElseThrow(()->new IllegalArgumentException("TraineeData is null"));
             traineeData.validate();
         }catch (IllegalArgumentException e){
             System.out.println(e.getMessage());
@@ -50,10 +51,11 @@ public class TraineeFacade {
 
     public Trainee updateTrainee(AuthData authData, TraineeDataUpdate traineeDataUpdate){
         try{
-            nullValidation(authData);
+            Optional.ofNullable(authData).orElseThrow(()->new IllegalArgumentException("AuthData is null"));
             userService.authenticate(authData);
-            nullValidation(traineeDataUpdate);
+            Optional.ofNullable(traineeDataUpdate).orElseThrow(()->new IllegalArgumentException("TraineeDataUpdate is null"));
             traineeDataUpdate.validate();
+
             Trainee trainee = traineeService.update(traineeDataUpdate);
             System.out.println("Trainee updated.");
             logger.info("Trainee updated. " + trainee);
@@ -66,9 +68,9 @@ public class TraineeFacade {
 
     public List<Trainee> updateTraineeList(AuthData authData, List<TraineeDataUpdate> traineeDataUpdateList){
         try{
-            nullValidation(authData);
+            Optional.ofNullable(authData).orElseThrow(()->new IllegalArgumentException("AuthData is null"));
             userService.authenticate(authData);
-            nullValidation(traineeDataUpdateList);
+            Optional.ofNullable(traineeDataUpdateList).orElseThrow(()->new IllegalArgumentException("TraineeDataUpdateList is null"));
             List<Trainee> trainees = traineeService.updateList(traineeDataUpdateList);
             System.out.println("Trainees updated.");
             logger.info("Trainees updated.");
@@ -81,7 +83,7 @@ public class TraineeFacade {
 
     public Trainee deleteByUsername(AuthData authData, String username){
         try{
-            nullValidation(authData);
+            Optional.ofNullable(authData).orElseThrow(()->new IllegalArgumentException("AuthData is null"));
             userService.authenticate(authData);
             Trainee trainee = traineeService.deleteByUsername(username);
             System.out.println("Trainee deleted.");
@@ -96,6 +98,7 @@ public class TraineeFacade {
 
     public Trainee getTrainee(long id){
         try{
+            validateId(id);
             Trainee trainee = traineeService.get(id);
             logger.info("Get trainee by id. " + trainee);
             return trainee;
@@ -125,7 +128,7 @@ public class TraineeFacade {
 
     public void changePassword(AuthData authData, String newPassword){
         try{
-            nullValidation(authData);
+            Optional.ofNullable(authData).orElseThrow(()->new IllegalArgumentException("AuthData is null"));
             User authedUser = userService.authenticate(authData);
             userService.changePassword(authedUser,newPassword);
             logger.info("Password changed for user: " + authedUser);
@@ -138,7 +141,8 @@ public class TraineeFacade {
 
     public void changeActiveStatus(long id){
         try{
-           userService.changeActiveStatus(id);
+            validateId(id);
+            userService.changeActiveStatus(id);
         }catch (IllegalArgumentException e){
             System.out.println(e.getMessage());
             logger.info(e.getMessage());
