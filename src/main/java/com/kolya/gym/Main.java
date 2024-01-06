@@ -1,9 +1,6 @@
 package com.kolya.gym;
 
 
-import com.kolya.gym.builder.TraineeDataBuilder;
-import com.kolya.gym.builder.TrainerDataBuilder;
-import com.kolya.gym.builder.TrainingDataBuilder;
 import com.kolya.gym.config.Config;
 import com.kolya.gym.data.*;
 import com.kolya.gym.domain.Trainee;
@@ -14,8 +11,7 @@ import com.kolya.gym.facade.TrainingFacade;
 import org.apache.logging.log4j.Logger;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.Date;
-import java.util.Optional;
+import static com.kolya.gym.prepareddata.PreparedData.*;
 
 
 public class Main {
@@ -28,25 +24,25 @@ public class Main {
 
         logger.info("Application context is ready!");
 
-        TraineeData traineeData = new TraineeDataBuilder().setFirstName("Nikolay").setLastName("").build();
-        traineeFacade.createTrainee(traineeData);
+        TraineeData wrongTraineeData = wrongTraineeDataList.get(0);
+        traineeFacade.createTrainee(wrongTraineeData);
 
-        TraineeData traineeData2 = new TraineeDataBuilder().setFirstName("Nikolay5").setLastName("Alexeev").build();
-        traineeFacade.createTrainee(traineeData2);
+        TraineeData wrongTraineeData2 = wrongTraineeDataList.get(1);
+        traineeFacade.createTrainee(wrongTraineeData2);
 
-        TraineeData traineeData3 = new TraineeDataBuilder().setFirstName("Nikolay").setLastName("Alexeev").build();
-        Trainee trainee= traineeFacade.createTrainee(traineeData3);
+        TraineeData traineeData = traineeDataList.get(0);
+        Trainee trainee= traineeFacade.createTrainee(traineeData);
         AuthData authData = new AuthData(trainee.getUser().getUsername(),trainee.getUser().getPassword());
 
-        TraineeData traineeData4 = new TraineeDataBuilder().setFirstName("Vasiliy").setLastName("Palkin").build();
-        traineeFacade.createTrainee(traineeData4);
+        TraineeData traineeData2 = traineeDataList.get(1);
+        traineeFacade.createTrainee(traineeData2);
 
         traineeFacade.changePassword(authData,"password");
         trainee = traineeFacade.getTrainee(1);
         System.out.println(trainee.getUser().getPassword());
         authData.setPassword("password");
 
-        traineeFacade.createTrainee(traineeData3);
+        traineeFacade.createTrainee(traineeData);
         System.out.println(traineeFacade.getAllTrainees());
 
 
@@ -57,36 +53,22 @@ public class Main {
         System.out.println(traineeFacade.getAllTrainees());
 
 
-        TrainerData trainerDataWrong = new TrainerDataBuilder().setFirstName("Genadiy").setLastName("Tokov").setSpecialization("   ").build();
-        trainerFacade.createTrainer(trainerDataWrong);
+        TrainerData wrongTrainerData = wrongTrainerDataList.get(0);
+        trainerFacade.createTrainer(wrongTrainerData);
         System.out.println(trainerFacade.getAllTrainers());
 
-        TrainerData trainerData = new TrainerDataBuilder().setFirstName("Genadiy").setLastName("Tokov").setSpecialization("Super trainer").build();
+        TrainerData trainerData = trainerDataList.get(0);
         trainerFacade.createTrainer(trainerData);
         System.out.println(trainerFacade.getAllTrainers());
 
-        TrainingData trainingData = new TrainingDataBuilder()
-                .setTraineeId(1)
-                .setTrainerId(1)
-                .setDuration(24)
-                .setTrainingName("Training Name 0")
-                .setTrainingType(TrainingType.TYPE_1)
-                .setTrainingDate(new Date())
-                .build();
+        TrainingData trainingData = trainingDataList.get(0);
         trainingFacade.createTraining(trainingData);
         System.out.println(trainingFacade.getAllTrainings());
 
 
 
-        TrainingData trainingDataWrong = new TrainingDataBuilder()
-                .setTraineeId(1)
-                .setTrainerId(5)
-                .setDuration(24)
-                .setTrainingType(TrainingType.TYPE_1)
-                .setTrainingName("Training Name 1")
-                .setTrainingDate(new Date())
-                .build();
-        trainingFacade.createTraining(trainingDataWrong);
+        TrainingData wrongTrainingData = wrongTrainingDataList.get(0);
+        trainingFacade.createTraining(wrongTrainingData);
         System.out.println(trainingFacade.getAllTrainings());
 
         traineeFacade.deleteByUsername(authData,"Nikolay.Alexeev");
@@ -99,34 +81,13 @@ public class Main {
         System.out.println(traineeFacade.getNotAssignedTrainees());
 
 
-        TrainingData trainingData2 = new TrainingDataBuilder()
-                .setTraineeId(3)
-                .setTrainerId(1)
-                .setDuration(12)
-                .setTrainingType(TrainingType.TYPE_2)
-                .setTrainingName("Training Name 2")
-                .setTrainingDate(new Date())
-                .build();
+        TrainingData trainingData2 = trainingDataList.get(1);
         trainingFacade.createTraining(trainingData2);
 
-        TrainingData trainingData3 = new TrainingDataBuilder()
-                .setTraineeId(3)
-                .setTrainerId(1)
-                .setDuration(24)
-                .setTrainingType(TrainingType.TYPE_3)
-                .setTrainingName("Training Name 3")
-                .setTrainingDate(new Date())
-                .build();
+        TrainingData trainingData3 = trainingDataList.get(2);
         trainingFacade.createTraining(trainingData3);
 
-        TrainingData trainingData4 = new TrainingDataBuilder()
-                .setTraineeId(3)
-                .setTrainerId(1)
-                .setDuration(36)
-                .setTrainingType(TrainingType.TYPE_3)
-                .setTrainingName("Training Name 3")
-                .setTrainingDate(new Date())
-                .build();
+        TrainingData trainingData4 = trainingDataList.get(3);
         trainingFacade.createTraining(trainingData4);
         System.out.println(trainingFacade.getAllTrainings());
 

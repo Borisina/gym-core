@@ -213,8 +213,10 @@
             <excludes>
               <exclude>com/kolya/gym/domain/*</exclude>
               <exclude>com/kolya/gym/data/*</exclude>
+              <exclude>com/kolya/gym/builder/*</exclude>
               <exclude>**/config/*</exclude>
               <exclude>**/Main.class</exclude>
+              <exclude>com/kolya/gym/prepareddata/*</exclude>
             </excludes>
           </configuration>
         </plugin>
