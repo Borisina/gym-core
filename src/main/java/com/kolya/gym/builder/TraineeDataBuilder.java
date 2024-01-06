@@ -6,7 +6,11 @@ import com.kolya.gym.data.TrainerData;
 import java.util.Date;
 
 public class TraineeDataBuilder {
-    private TraineeData traineeData;
+    private final TraineeData traineeData;
+
+    public TraineeDataBuilder() {
+        traineeData = new TraineeData();
+    }
 
     public TraineeDataBuilder setFirstName(String firstName){
         traineeData.setFirstName(firstName);

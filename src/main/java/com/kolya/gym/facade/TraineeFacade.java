@@ -61,6 +61,7 @@ public class TraineeFacade {
             logger.info("Trainee updated. " + trainee);
             return trainee;
         }catch (AuthenticationException | IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
@@ -76,6 +77,7 @@ public class TraineeFacade {
             logger.info("Trainees updated.");
             return trainees;
         }catch (AuthenticationException | IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }

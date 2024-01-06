@@ -6,7 +6,11 @@ import com.kolya.gym.domain.TrainingType;
 import java.util.Date;
 
 public class TrainingDataBuilder {
-    private TrainingData trainingData;
+    private final TrainingData trainingData;
+
+    public TrainingDataBuilder() {
+        trainingData = new TrainingData();
+    }
 
     public TrainingDataBuilder setTraineeId(long id){
         trainingData.setTraineeId(id);

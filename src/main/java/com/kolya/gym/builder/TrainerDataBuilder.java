@@ -3,7 +3,11 @@ package com.kolya.gym.builder;
 import com.kolya.gym.data.TrainerData;
 
 public class TrainerDataBuilder {
-    private TrainerData trainerData;
+    private final TrainerData trainerData;
+
+    public TrainerDataBuilder() {
+        trainerData = new TrainerData();
+    }
 
     public TrainerDataBuilder setFirstName(String firstName){
         trainerData.setFirstName(firstName);
@@ -16,7 +20,7 @@ public class TrainerDataBuilder {
     }
 
     public TrainerDataBuilder setSpecialization(String specialization){
-        trainerData.setLastName(specialization);
+        trainerData.setSpecialization(specialization);
         return this;
     }
 

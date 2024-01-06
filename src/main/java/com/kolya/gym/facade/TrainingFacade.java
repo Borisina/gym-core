@@ -32,6 +32,7 @@ public class TrainingFacade {
             logger.info("Training created. " + training);
             return training;
         }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
@@ -43,6 +44,7 @@ public class TrainingFacade {
             logger.info("Get training. " + training);
             return training;
         }catch(IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
@@ -62,6 +64,7 @@ public class TrainingFacade {
             logger.info("Get trainings by trainee's username and criteria.");
             return trainingService.getByTraineeUsernameAndCriteria(username,trainingCriteria);
         }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
@@ -76,6 +79,7 @@ public class TrainingFacade {
             logger.info("Get trainings by trainer's username and criteria.");
             return trainingService.getByTrainerUsernameAndCriteria(username,trainingCriteria);
         }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
