@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
-import static com.kolya.gym.validation.CommonValidation.nullValidation;
 
 @Component
 public class TrainingFacade {
@@ -26,7 +26,7 @@ public class TrainingFacade {
 
     public Training createTraining(TrainingData trainingData){
         try{
-            nullValidation(trainingData);
+            Optional.ofNullable(trainingData).orElseThrow(()->new IllegalArgumentException("TrainingData is null"));
             trainingData.validate();
             Training training = trainingService.create(trainingData);
             logger.info("Training created. " + training);
@@ -55,7 +55,7 @@ public class TrainingFacade {
 
     public List<Training> getByTraineeUsernameAndCriteria(String username, TrainingCriteria trainingCriteria){
         try{
-            nullValidation(username);
+            Optional.ofNullable(username).orElseThrow(()->new IllegalArgumentException("Username is null"));
             if (trainingCriteria!=null){
                 trainingCriteria.validate();
             }
@@ -69,7 +69,7 @@ public class TrainingFacade {
 
     public List<Training> getByTrainerUsernameAndCriteria(String username, TrainingCriteria trainingCriteria){
         try{
-            nullValidation(username);
+            Optional.ofNullable(username).orElseThrow(()->new IllegalArgumentException("Username is null"));
             if (trainingCriteria!=null){
                 trainingCriteria.validate();
             }

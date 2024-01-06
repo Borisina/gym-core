@@ -86,9 +86,6 @@ public class UserService {
     }
 
     public boolean changeActiveStatus(long id){
-        if (id<=0){
-            throw new IllegalArgumentException("Wrong parameter id: cant be <=0");
-        }
         User user = userRepo.findById(id).orElseThrow(()-> new IllegalArgumentException("There is no user with id = "+id));
         boolean newStatus = !user.isActive();
         user.setActive(newStatus);

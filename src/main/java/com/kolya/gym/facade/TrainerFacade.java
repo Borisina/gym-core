@@ -11,8 +11,9 @@ import org.springframework.stereotype.Component;
 
 import javax.naming.AuthenticationException;
 import java.util.List;
+import java.util.Optional;
 
-import static com.kolya.gym.validation.CommonValidation.nullValidation;
+import static com.kolya.gym.validation.CommonValidation.validateId;
 
 @Component
 public class TrainerFacade {
@@ -31,7 +32,7 @@ public class TrainerFacade {
 
     public Trainer createTrainer(TrainerData trainerData){
         try{
-            nullValidation(trainerData);
+            Optional.ofNullable(trainerData).orElseThrow(()->new IllegalArgumentException("TrainerData is null"));
             trainerData.validate();
         }catch (IllegalArgumentException e){
             logger.info(e.getMessage());
@@ -47,9 +48,12 @@ public class TrainerFacade {
 
     public Trainer updateTrainer(AuthData authData, TrainerData trainerData, long trainerId){
         try{
+            Optional.ofNullable(authData).orElseThrow(()->new IllegalArgumentException("AuthData is null"));
             userService.authenticate(authData);
-            nullValidation(trainerData);
+            Optional.ofNullable(trainerData).orElseThrow(()->new IllegalArgumentException("TrainerData is null"));
             trainerData.validateCharacters();
+            validateId(trainerId);
+
             Trainer trainer = trainerService.update(trainerData,trainerId);
             System.out.println("Trainer updated.");
             logger.info("Trainer updated. " + trainer);
@@ -63,6 +67,7 @@ public class TrainerFacade {
 
     public Trainer getTrainer(long id){
         try{
+            validateId(id);
             Trainer trainer = trainerService.get(id);
             logger.info("Get trainer. " + trainer);
             return trainer;
@@ -92,6 +97,7 @@ public class TrainerFacade {
 
     public void changeActiveStatus(long id){
         try{
+            validateId(id);
             userService.changeActiveStatus(id);
         }catch (IllegalArgumentException e){
             System.out.println(e.getMessage());

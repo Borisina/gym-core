@@ -7,14 +7,14 @@ import static org.junit.Assert.fail;
 public class CommonValidationTest {
 
     @Test(expected = IllegalArgumentException.class)
-    public void nullValidation_NullInput_Test() {
-        CommonValidation.nullValidation(null);
+    public void validateId_Test_Exception() {
+        CommonValidation.validateId(-1);
     }
 
     @Test
-    public void nullValidation_NotNullInput_Test() {
+    public void validateId_Test() {
         try {
-            CommonValidation.nullValidation(new Object());
+            CommonValidation.validateId(1);
         } catch (IllegalArgumentException e) {
             fail("IllegalArgumentException was thrown for not null input");
         }

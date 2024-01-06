@@ -1,10 +1,9 @@
 package com.kolya.gym.validation;
 
 public class CommonValidation {
-    static public void nullValidation(Object object) throws IllegalArgumentException{
-        if (object==null){
-            throw new IllegalArgumentException("Input Data is null");
+    static public void validateId(long id) throws IllegalArgumentException{
+        if (id<=0){
+            throw new IllegalArgumentException("Wrong parameter 'id': cant be <=0");
         }
-
     }
 }
