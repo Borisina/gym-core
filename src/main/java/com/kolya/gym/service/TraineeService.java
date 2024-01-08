@@ -44,7 +44,7 @@ public class TraineeService {
             trainee.setDateOfBirth(updatedTrainee.getDateOfBirth());
         }
         userService.change(trainee.getUser(),updatedTrainee.getUser());
-        trainee = traineeRepo.save(trainee);
+        //trainee = traineeRepo.save(trainee);
         return trainee;
     }
 

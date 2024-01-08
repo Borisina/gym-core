@@ -39,7 +39,7 @@ public class TrainerService {
             trainer.setSpecialization(updatedTrainer.getSpecialization());
         }
         userService.change(trainer.getUser(),updatedTrainer.getUser());
-        trainer = trainerRepo.save(trainer);
+        //trainer = trainerRepo.save(trainer);
         return trainer;
     }
 

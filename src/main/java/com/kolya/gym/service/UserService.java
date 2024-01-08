@@ -58,16 +58,20 @@ public class UserService {
     public void change(User user, User updatedUser){
         boolean isUpdated = false;
         if (updatedUser!=null){
+            String firstName = user.getFirstName();
+            String lastName = user.getLastName();
             if (updatedUser.getFirstName()!=null){
-                user.setFirstName(updatedUser.getFirstName());
+                firstName = updatedUser.getFirstName();
                 isUpdated=true;
             }
             if (updatedUser.getLastName()!=null){
-                user.setLastName(updatedUser.getLastName());
+                lastName = updatedUser.getLastName();
                 isUpdated=true;
             }
             if (isUpdated){
-                user.setUsername(generateUsername(user.getFirstName(),user.getLastName()));
+                user.setUsername(generateUsername(firstName,lastName));
+                user.setLastName(lastName);
+                user.setFirstName(firstName);
             }
         }
     }
