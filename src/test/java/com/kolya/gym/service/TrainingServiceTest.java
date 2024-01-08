@@ -1,84 +1,138 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.dao.TraineeDao;
-import com.kolya.gym.dao.TrainerDao;
-import com.kolya.gym.dao.TrainingDao;
+import com.kolya.gym.data.TrainingCriteria;
 import com.kolya.gym.data.TrainingData;
-import com.kolya.gym.domain.Trainee;
-import com.kolya.gym.domain.Trainer;
-import com.kolya.gym.domain.Training;
-import com.kolya.gym.domain.TrainingType;
+import com.kolya.gym.domain.*;
+import com.kolya.gym.repo.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.any;
 
 public class TrainingServiceTest {
 
     @InjectMocks
-    private TrainingService trainingService;
+    TrainingService trainingService;
 
     @Mock
-    private TrainingDao trainingDao;
+    TrainingRepo trainingRepo;
 
     @Mock
-    private TrainerDao trainerDao;
+    TrainerRepo trainerRepo;
 
     @Mock
-    private TraineeDao traineeDao;
+    TraineeRepo traineeRepo;
 
-    private Training training;
-    private TrainingData trainingData;
-    private Trainer trainer;
-    private Trainee trainee;
+    @Mock
+    UserRepo userRepo;
 
     @Before
-    public void setUp() {
+    public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
+    }
 
-        training = new Training();
+    @Test
+    public void testCreateTraining() throws Exception {
+        TrainingData trainingData = new TrainingData();
+        trainingData.setTrainerId(1L);
+        trainingData.setTraineeId(1L);
+        Training training = new Training();
+
+        when(traineeRepo.findById(trainingData.getTraineeId())).thenReturn(java.util.Optional.of(new Trainee()));
+        when(trainerRepo.findById(trainingData.getTrainerId())).thenReturn(java.util.Optional.of(new Trainer()));
+        when(trainingRepo.save(any(Training.class))).thenReturn(training);
+
+        Training trainingResult = trainingService.create(trainingData);
+
+        assertNotNull(trainingResult);
+    }
+
+    @Test
+    public void testGetTraining() throws Exception {
+        Training training = new Training();
         training.setId(1L);
 
-        trainingData = new TrainingData();
-        trainingData.setTrainingType("type_1");
+        when(trainingRepo.findById(training.getId())).thenReturn(java.util.Optional.of(training));
 
-        trainer = new Trainer();
-        trainer.setId(1L);
+        Training trainingResult = trainingService.get(training.getId());
 
-        trainee = new Trainee();
-        trainee.setId(2L);
+        assertNotNull(trainingResult);
     }
 
     @Test
-    public void testCreate() {
-        when(trainerDao.get(any(Long.class))).thenReturn(trainer);
-        when(traineeDao.get(any(Long.class))).thenReturn(trainee);
-        when(trainingDao.create(any(Training.class))).thenReturn(training);
-        Training result = trainingService.create(trainingData);
-        assertEquals(1L, result.getId());
+    public void testGetByTraineeUsernameAndCriteria() throws Exception {
+        String username = "kolya";
+        TrainingCriteria trainingCriteria = new TrainingCriteria();
+        trainingCriteria.setTrainingType(TrainingType.TYPE_1);
+        Training training = new Training();
+        User user = new User();
+        user.setId(1L);
+        Trainee trainee = new Trainee();
+        trainee.setUser(user);
+        List<Training> trainings = Arrays.asList(training);
+
+        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.of(user));
+        when(traineeRepo.findByUserId(1L)).thenReturn(java.util.Optional.of(trainee));
+        when(trainingRepo.findByTraineeIdAndCriteria(
+                1L,
+                trainingCriteria.getTrainingType().name(),
+                trainingCriteria.getTrainingName(),
+                trainingCriteria.getTrainingDateFrom(),
+                trainingCriteria.getTrainingDateTo(),
+                trainingCriteria.getDurationMin(),
+                trainingCriteria.getDurationMax())).thenReturn(trainings);
+
+        List<Training> result = trainingService.getByTraineeUsernameAndCriteria(username, trainingCriteria);
+
+        assertNotNull(result);
     }
 
     @Test
-    public void testGet() {
-        when(trainingDao.get(1L)).thenReturn(training);
-        Training result = trainingService.get(1L);
-        assertEquals(1L, result.getId());
+    public void testGetByTrainerUsernameAndCriteria() throws Exception {
+        String username = "kolya";
+        TrainingCriteria trainingCriteria = new TrainingCriteria();
+        trainingCriteria.setTrainingType(TrainingType.TYPE_1);
+        User user = new User();
+        user.setId(1L);
+        Trainer trainer = new Trainer();
+        trainer.setUser(user);
+        Training training = new Training();
+        List<Training> trainings = Arrays.asList(training);
+
+        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.of(user));
+        when(trainerRepo.findByUserId(1L)).thenReturn(java.util.Optional.of(trainer));
+        when(trainingRepo.findByTrainerIdAndCriteria(
+                1L,
+                trainingCriteria.getTrainingType().name(),
+                trainingCriteria.getTrainingName(),
+                trainingCriteria.getTrainingDateFrom(),
+                trainingCriteria.getTrainingDateTo(),
+                trainingCriteria.getDurationMin(),
+                trainingCriteria.getDurationMax())).thenReturn(trainings);
+
+        List<Training> result = trainingService.getByTrainerUsernameAndCriteria(username, trainingCriteria);
+
+        assertNotNull(result);
     }
 
     @Test
-    public void testGetAll() {
-        when(trainingDao.getAll()).thenReturn(Collections.singletonList(training));
+    public void testGetAll() throws Exception {
+        Training training1 = new Training();
+        Training training2 = new Training();
+        List<Training> trainings = Arrays.asList(training1, training2);
+
+        when(trainingRepo.findAll()).thenReturn(trainings);
+
         List<Training> result = trainingService.getAll();
-        assertFalse(result.isEmpty());
-        assertEquals(1L, result.get(0).getId());
+
+        assertNotNull(result);
     }
 }

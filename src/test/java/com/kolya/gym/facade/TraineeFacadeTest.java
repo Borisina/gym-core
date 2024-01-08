@@ -1,6 +1,8 @@
 package com.kolya.gym.facade;
 
+import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TraineeData;
+import com.kolya.gym.data.TraineeDataUpdate;
 import com.kolya.gym.domain.Trainee;
 import com.kolya.gym.domain.User;
 import com.kolya.gym.service.TraineeService;
@@ -12,87 +14,162 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import static org.junit.Assert.assertNotNull;
+import javax.naming.AuthenticationException;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class TraineeFacadeTest {
 
     @InjectMocks
-    private TraineeFacade traineeFacade;
+    TraineeFacade facade;
 
     @Mock
-    private TraineeService traineeService;
+    TraineeService traineeService;
 
     @Mock
-    private UserService userService;
+    UserService userService;
 
     @Mock
-    private Logger logger;
-
-    private Trainee trainee;
-    private User user;
-    private TraineeData traineeData;
+    Logger logger;
 
     @Before
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
-
-        trainee = new Trainee();
-        trainee.setId(1L);
-
-        user = new User();
-        user.setId(1L);
-        trainee.setUser(user);
-
-        traineeData = new TraineeData();
-        traineeData.setFirstName("first");
-        traineeData.setLastName("last");
+        MockitoAnnotations.initMocks(this);
     }
 
     @Test
     public void testCreateTrainee() {
-        when(userService.create(any(String.class), any(String.class))).thenReturn(user);
-        when(traineeService.create(any(TraineeData.class), any(User.class))).thenReturn(trainee);
-        Trainee result = traineeFacade.createTrainee(traineeData);
-        assertNotNull(result);
+        TraineeData traineeData = new TraineeData();
+        traineeData.setFirstName("Nikolay");
+        traineeData.setLastName("Alexeev");
+        User user = new User();
+        user.setUsername("Nikolay.Alexeev");
+        Trainee trainee = new Trainee();
+        trainee.setUser(user);
+        when(traineeService.create(traineeData)).thenReturn(trainee);
+        Trainee result = facade.createTrainee(traineeData);
+        assertEquals(trainee, result);
     }
 
     @Test
     public void testUpdateTrainee() {
-        when(traineeService.get(any(Long.class))).thenReturn(trainee);
-        when(userService.update(any(String.class), any(String.class), any(Long.class))).thenReturn(user);
-        when(traineeService.update(any(TraineeData.class), any(User.class), any(Long.class))).thenReturn(trainee);
-        Trainee result = traineeFacade.updateTrainee(traineeData,any(Long.class));
-        assertNotNull(result);
+        AuthData authData = new AuthData();
+        TraineeDataUpdate updateData = new TraineeDataUpdate();
+        updateData.setId(1L);
+        Trainee trainee = new Trainee();
+        when(traineeService.update(updateData)).thenReturn(trainee);
+        Trainee result = facade.updateTrainee(authData, updateData);
+        assertEquals(trainee, result);
     }
 
     @Test
-    public void testDeleteTrainee() {
-        when(traineeService.delete(1L)).thenReturn(trainee);
-        when(userService.delete(1L)).thenReturn(user);
-        Trainee result = traineeFacade.deleteTrainee(1L);
-        assertNotNull(result);
+    public void testUpdateTraineeList() {
+        AuthData authData = new AuthData();
+        List<TraineeDataUpdate> updateList = Arrays.asList(new TraineeDataUpdate(), new TraineeDataUpdate());
+        when(traineeService.updateList(updateList)).thenReturn(Arrays.asList(new Trainee(), new Trainee()));
+        List<Trainee> result = facade.updateTraineeList(authData, updateList);
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testDeleteByUsername() {
+        AuthData authData = new AuthData();
+        Trainee trainee = new Trainee();
+        when(traineeService.deleteByUsername("test")).thenReturn(trainee);
+        Trainee result = facade.deleteByUsername(authData, "test");
+        assertEquals(trainee, result);
     }
 
     @Test
     public void testGetTrainee() {
+        Trainee trainee = new Trainee();
         when(traineeService.get(1L)).thenReturn(trainee);
-        Trainee result = traineeFacade.getTrainee(1L);
-        assertNotNull(result);
+        Trainee result = facade.getTrainee(1L);
+        assertEquals(trainee, result);
     }
 
-    // invalid data triggers catch block ensuring returned Trainee is null
     @Test
-    public void testCreateTraineeWithInvalidData() {
-        traineeData.setFirstName(""); // invalid
-        Trainee result = traineeFacade.createTrainee(traineeData);
-        assertNull(result);
-
-        traineeData.setFirstName("Ivanov4"); // invalid
-        result = traineeFacade.createTrainee(traineeData);
-        assertNull(result);
-
+    public void testGetByUsername() {
+        Trainee trainee = new Trainee();
+        when(traineeService.getByUsername("test")).thenReturn(trainee);
+        Trainee result = facade.getByUsername("test");
+        assertEquals(trainee, result);
     }
+
+    @Test
+    public void testGetAllTrainees() {
+        when(traineeService.getAll()).thenReturn(Arrays.asList(new Trainee(), new Trainee()));
+        List<Trainee> result = facade.getAllTrainees();
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void testGetNotAssignedTrainees() {
+        when(traineeService.getNotAssigned()).thenReturn(Arrays.asList(new Trainee(), new Trainee()));
+        List<Trainee> result = facade.getNotAssignedTrainees();
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    public void createTrainee_NullData_Test() {
+        assertNull(facade.createTrainee(null));
+    }
+
+    @Test
+    public void updateTrainee_NullAuthData_Test() throws AuthenticationException {
+        when(userService.authenticate(null)).thenThrow(IllegalArgumentException.class);
+        TraineeDataUpdate mockUpdate = mock(TraineeDataUpdate.class);
+
+        assertNull(facade.updateTrainee(null, mockUpdate));
+    }
+
+    @Test
+    public void updateTrainee_NullUpdateData_Test() throws AuthenticationException {
+        AuthData mockAuth = mock(AuthData.class);
+        when(userService.authenticate(mockAuth)).thenReturn(null);
+
+        assertNull(facade.updateTrainee(mockAuth, null));
+    }
+
+    @Test
+    public void updateTraineeList_NullAuthData_Test() throws AuthenticationException {
+        when(userService.authenticate(null)).thenThrow(IllegalArgumentException.class);
+        List<TraineeDataUpdate> mockUpdateList = mock(List.class);
+
+        assertNull(facade.updateTraineeList(null, mockUpdateList));
+    }
+
+    @Test
+    public void updateTraineeList_NullUpdateData_Test() throws AuthenticationException {
+        AuthData mockAuth = mock(AuthData.class);
+        when(userService.authenticate(mockAuth)).thenReturn(null);
+
+        assertNull(facade.updateTraineeList(mockAuth, null));
+    }
+
+    @Test
+    public void deleteByUsername_NullAuthData_Test() throws AuthenticationException {
+        when(userService.authenticate(null)).thenThrow(IllegalArgumentException.class);
+
+        assertNull(facade.deleteByUsername(null, "username"));
+    }
+
+    @Test
+    public void getTrainee_InvalidId_Test() {
+        when(traineeService.get(-1L)).thenThrow(IllegalArgumentException.class);
+
+        assertNull(facade.getTrainee(-1));
+    }
+
+    @Test
+    public void getByUsername_NullUsername_Test() {
+        when(traineeService.getByUsername(null)).thenThrow(IllegalArgumentException.class);
+
+        assertNull(facade.getByUsername(null));
+    }
+
 }

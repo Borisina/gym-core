@@ -1,11 +1,18 @@
 package com.kolya.gym.domain;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
+@Entity
 public class Trainee {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private Date dateOfBirt;
+    private Date dateOfBirth;
     private String Address;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
     public long getId() {
@@ -16,12 +23,12 @@ public class Trainee {
         this.id = id;
     }
 
-    public Date getDateOfBirt() {
-        return dateOfBirt;
+    public Date getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setDateOfBirt(Date dateOfBirt) {
-        this.dateOfBirt = dateOfBirt;
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getAddress() {
@@ -44,7 +51,7 @@ public class Trainee {
     public String toString() {
         return "Trainee{" +
                 "id=" + id +
-                ", dateOfBirt=" + dateOfBirt +
+                ", dateOfBirth=" + dateOfBirth +
                 ", Address='" + Address + '\'' +
                 ", user=" + user +
                 '}';

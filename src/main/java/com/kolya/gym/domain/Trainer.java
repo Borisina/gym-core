@@ -1,9 +1,15 @@
 package com.kolya.gym.domain;
 
+import jakarta.persistence.*;
 
+@Entity
 public class Trainer{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String specialization;
+
+    @OneToOne(cascade = CascadeType.ALL)
     private User user;
 
     public long getId() {

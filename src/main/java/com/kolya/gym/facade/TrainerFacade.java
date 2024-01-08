@@ -1,20 +1,24 @@
 package com.kolya.gym.facade;
 
+import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
-import com.kolya.gym.domain.*;
+import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.service.TrainerService;
 import com.kolya.gym.service.UserService;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.naming.AuthenticationException;
 import java.util.List;
+import java.util.Optional;
+
+import static com.kolya.gym.validation.CommonValidation.validateId;
 
 @Component
 public class TrainerFacade {
 
     private final TrainerService trainerService;
-
     private final UserService userService;
 
     private final Logger logger;
@@ -28,46 +32,79 @@ public class TrainerFacade {
 
     public Trainer createTrainer(TrainerData trainerData){
         try{
-            trainerData.isValid();
+            Optional.ofNullable(trainerData).orElseThrow(()->new IllegalArgumentException("TrainerData is null"));
+            trainerData.validate();
         }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
-        User user = userService.create(trainerData.getFirstName(),trainerData.getLastName());
-        logger.info("User created. " + user);
-        Trainer trainer = trainerService.create(trainerData,user);
-        logger.info("Trainer created. " + trainer);
+        Trainer trainer = trainerService.create(trainerData);
+        String username = trainer.getUser().getUsername();
+        String password = trainer.getUser().getPassword();
+        System.out.println("Trainer created: Username = "+username+"; Password = "+password+";");
+        logger.info("Trainer created." + trainer);
         return trainer;
     }
 
-    public Trainer updateTrainer(TrainerData trainerData, long trainerId){
+    public Trainer updateTrainer(AuthData authData, TrainerData trainerData, long trainerId){
         try{
-            trainerData.isValidCharacters();
-            Trainer trainer = trainerService.get(trainerId);
-            User user = userService.update(trainerData.getFirstName(),trainerData.getLastName(),trainer.getUser().getId());
-            trainer = trainerService.update(trainerData, user, trainerId);
+            Optional.ofNullable(authData).orElseThrow(()->new IllegalArgumentException("AuthData is null"));
+            userService.authenticate(authData);
+            Optional.ofNullable(trainerData).orElseThrow(()->new IllegalArgumentException("TrainerData is null"));
+            trainerData.validateCharacters();
+            validateId(trainerId);
+
+            Trainer trainer = trainerService.update(trainerData,trainerId);
+            System.out.println("Trainer updated.");
             logger.info("Trainer updated. " + trainer);
             return trainer;
-        }catch (IllegalArgumentException e){
+        }catch (AuthenticationException | IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
-
     }
 
     public Trainer getTrainer(long id){
         try{
+            validateId(id);
             Trainer trainer = trainerService.get(id);
             logger.info("Get trainer. " + trainer);
             return trainer;
-        }catch(IllegalArgumentException e){
+        }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
+            logger.info(e.getMessage());
+            return null;
+        }
+    }
+
+    public Trainer getByUsername(String username){
+        try{
+            Trainer trainer = trainerService.getByUsername(username);
+            logger.info("Get trainer by username. " + trainer);
+            return trainer;
+        }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
             logger.info(e.getMessage());
             return null;
         }
     }
 
     public List<Trainer> getAllTrainers(){
-        logger.info("Get all trainers.");
+        logger.info("Get allTrainers.");
         return trainerService.getAll();
     }
+
+    public void changeActiveStatus(long id){
+        try{
+            validateId(id);
+            userService.changeActiveStatus(id);
+        }catch (IllegalArgumentException e){
+            System.out.println(e.getMessage());
+            logger.info(e.getMessage());
+        }
+    }
+
+
 }

@@ -8,21 +8,16 @@ public class TrainingData {
     private long trainerId;
     private long traineeId;
     private String trainingName;
-    private String trainingType;
+    private TrainingType trainingType;
     private Date trainingDate;
     private int duration;
 
 
-    public void isValid() throws IllegalArgumentException{
+    public void validate() throws IllegalArgumentException{
         if (trainerId<=0) throw new IllegalArgumentException("Wrong parameter 'trainerId' = "+trainerId+": can't be <=0");
         if (traineeId<=0) throw new IllegalArgumentException("Wrong parameter 'trainerId' = "+traineeId+": can't be <=0");
         if (trainingName==null || trainingName.isBlank()) throw new IllegalArgumentException("Wrong parameter 'trainingName': can't be empty");
-        if (trainingType==null || trainingType.isBlank()) throw new IllegalArgumentException("Wrong parameter 'trainingType': should be 'type_1','type_2','type_3'");
-        try{
-            TrainingType.valueOf(trainingType.toUpperCase());
-        }catch (IllegalArgumentException e){
-            throw new IllegalArgumentException("Wrong parameter 'trainingType' = "+trainingType +": should be 'type_1','type_2','type_3'");
-        }
+        if (trainingType==null) throw new IllegalArgumentException("Wrong parameter 'trainingType': can't be null");
         if (trainingDate==null) throw new IllegalArgumentException("Wrong parameter 'trainingDate': can't be empty");
         if (duration<=0) throw new IllegalArgumentException("Wrong parameter 'duration' = "+duration+": can't be <=0");
     }
@@ -52,11 +47,11 @@ public class TrainingData {
         this.trainingName = trainingName;
     }
 
-    public String getTrainingType() {
+    public TrainingType getTrainingType() {
         return trainingType;
     }
 
-    public void setTrainingType(String trainingType) {
+    public void setTrainingType(TrainingType trainingType) {
         this.trainingType = trainingType;
     }
 

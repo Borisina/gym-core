@@ -2,20 +2,20 @@ package com.kolya.gym.data;
 
 import java.util.Date;
 
-public class TraineeData extends UserData {
-    private Date dateOfBirt;
+public class TraineeData extends UserData{
+    private Date dateOfBirth;
     private String Address;
 
-    public void isValid() throws IllegalArgumentException{
-        super.isValid();
+    public void validate() throws IllegalArgumentException{
+        super.validate();
     }
 
-    public Date getDateOfBirt() {
-        return dateOfBirt;
+    public Date getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setDateOfBirt(Date dateOfBirt) {
-        this.dateOfBirt = dateOfBirt;
+    public void setDateOfBirth(Date dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getAddress() {
