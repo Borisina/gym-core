@@ -43,7 +43,9 @@ public class UserService {
 
     public String generateUsername(String firstName, String lastName){
         String username = firstName+"."+ lastName;
+        System.out.println("Generete: "+username);
         long count = userRepo.countDuplicates(firstName,lastName);
+        System.out.println("Generete count: "+count);
         if (count!=0){
             username=username+count;
         }
