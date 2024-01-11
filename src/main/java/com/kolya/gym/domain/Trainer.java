@@ -3,7 +3,7 @@ package com.kolya.gym.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import jakarta.persistence.*;
+import javax.persistence.*;
 
 import java.util.List;
 
@@ -14,7 +14,8 @@ public class Trainer{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "training_type_id")
     private TrainingType specialization;
 
 

@@ -29,6 +29,10 @@ public class AuthController {
         this.logger = logger;
     }
 
+    @GetMapping
+    public String hello(){
+        return "hello";
+    }
 
     @ApiOperation(value = "Change user's login", response = ResponseEntity.class)
     @ApiResponses(value = {

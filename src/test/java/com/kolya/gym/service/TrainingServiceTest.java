@@ -8,6 +8,7 @@ import com.kolya.gym.domain.Training;
 import com.kolya.gym.repo.TraineeRepo;
 import com.kolya.gym.repo.TrainerRepo;
 import com.kolya.gym.repo.TrainingRepo;
+import com.kolya.gym.repo.TrainingTypeRepo;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -36,6 +37,9 @@ public class TrainingServiceTest {
     private TraineeRepo traineeRepo;
 
     @Mock
+    private TrainingTypeRepo trainingTypeRepo;
+
+    @Mock
     private Logger logger;
 
     private TrainingService trainingService;
@@ -43,7 +47,7 @@ public class TrainingServiceTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.trainingService = new TrainingService(trainingRepo, trainerRepo, traineeRepo, logger);
+        this.trainingService = new TrainingService(trainingRepo, trainerRepo, traineeRepo, trainingTypeRepo, logger);
     }
 
     @Test

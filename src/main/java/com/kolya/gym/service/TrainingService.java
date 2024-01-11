@@ -19,14 +19,15 @@ public class TrainingService {
     private final TrainingRepo trainingRepo;
     private final TrainerRepo trainerRepo;
     private final TraineeRepo traineeRepo;
-
+    private final TrainingTypeRepo trainingTypeRepo;
     private final Logger logger;
 
     @Autowired
-    public TrainingService(TrainingRepo trainingRepo, TrainerRepo trainerRepo, TraineeRepo traineeRepo, Logger logger) {
+    public TrainingService(TrainingRepo trainingRepo, TrainerRepo trainerRepo, TraineeRepo traineeRepo, TrainingTypeRepo trainingTypeRepo, Logger logger) {
         this.trainingRepo = trainingRepo;
         this.trainerRepo = trainerRepo;
         this.traineeRepo = traineeRepo;
+        this.trainingTypeRepo = trainingTypeRepo;
         this.logger = logger;
     }
 
@@ -120,5 +121,12 @@ public class TrainingService {
                 && trainingCriteria.getTrainingDateFrom()==null
                 && trainingCriteria.getTrainingName()==null
                 && trainingCriteria.getTrainingType()==null;
+    }
+
+    public List<TrainingType> getTrainingTypes(UUID transactionId) {
+        logger.info("Transaction ID: {}, Getting ", transactionId);
+        List<TrainingType> types = trainingTypeRepo.findAll();
+        logger.info("Transaction ID: {}, Training Types were returned {}", transactionId,types);
+        return types;
     }
 }

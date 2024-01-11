@@ -1,5 +1,7 @@
 package com.kolya.gym.config;
 
+import org.flywaydb.core.Flyway;
+import org.hibernate.EmptyInterceptor;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -71,6 +73,14 @@ public class Config {
         return dataSource;
     }
 
+    @Bean(initMethod = "migrate")
+    public Flyway flyway(DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:migrations")
+                .baselineOnMigrate(true)
+                .load();
+    }
 
     @Bean
     public PlatformTransactionManager transactionManager() {
@@ -79,10 +89,15 @@ public class Config {
         return transactionManager;
     }
 
+    @Bean
+    public EmptyInterceptor emptyInterceptor() {
+        return new EnumAsEntityInterceptor();
+    }
+
     Properties additionalProperties() {
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", ddlAuto);
-        //properties.setProperty("hibernate.dialect", dialect);
+        properties.put("hibernate.ejb.interceptor", emptyInterceptor());
         properties.setProperty("hibernate.physical_naming_strategy", "com.kolya.gym.config.SnakeCaseNamingStrategy");
         return properties;
     }

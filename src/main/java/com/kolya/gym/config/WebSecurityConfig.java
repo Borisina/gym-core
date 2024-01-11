@@ -34,16 +34,14 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
         http.csrf().disable()
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers("/change-login","/login","/logout","/error").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/trainees","/trainers").permitAll()
+                .authorizeRequests((requests) -> requests
+                        .antMatchers("/change-login","/login","/logout","/error","/").permitAll()
+                        .antMatchers("/v2/api-docs", "/csrf", "/configuration/ui", "/swagger-resources/**", "/configuration/security", "/swagger-ui.html", "/webjars/**").permitAll()
+                        .antMatchers(HttpMethod.POST,"/trainees","/trainers").permitAll()
                         .anyRequest().authenticated()
                 ).httpBasic();
         return http.build();
     }
-
-
 
 }

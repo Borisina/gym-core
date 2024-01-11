@@ -110,4 +110,18 @@ public class TrainingController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @ApiOperation(value = "Get trainings types", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK, Training types returned"),
+            @ApiResponse(code = 400, message = "BAD_REQUEST, the request body or params are invalid or incorrect"),
+    })
+    @GetMapping("/trainings/training-types")
+    public ResponseEntity<?> getTrainingTypes(){
+        UUID transactionId = UUID.randomUUID();
+        logger.info("Transaction ID: {}, GET /trainings/training-types was called with body", transactionId);
+        List<TrainingType> trainingTypes = trainingService.getTrainingTypes(transactionId);
+        logger.info("Transaction ID: {}, OK, Training Types were returned", transactionId);
+        return ResponseEntity.status(HttpStatus.OK).body(trainingTypes);
+    }
 }

@@ -1,7 +1,7 @@
 package com.kolya.gym.domain;
 
 import com.fasterxml.jackson.annotation.*;
-import jakarta.persistence.*;
+import javax.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -28,7 +28,8 @@ public class Training{
 
     //@ElementCollection(targetClass = TrainingType.class, fetch = FetchType.EAGER)
     //@CollectionTable(name = "training_type", joinColumns = @JoinColumn(name = "training_id"))
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "training_type_id")
     private TrainingType trainingType;
 
     //@Temporal(TemporalType.DATE)
