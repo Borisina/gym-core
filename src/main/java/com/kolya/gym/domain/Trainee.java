@@ -1,18 +1,41 @@
 package com.kolya.gym.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Trainee {
+    @JsonIgnore
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    private Date dateOfBirth;
-    private String Address;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
+    private Date dateOfBirth;
+    private String address;
+
+    @JsonIgnoreProperties({"traineesList"})
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name="trainees_trainers",
+            joinColumns = {@JoinColumn(name="trainee_id")},
+            inverseJoinColumns ={@JoinColumn(name="trainer_id")}
+    )
+    private List<Trainer> trainersList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY)
+    private List<Training> trainingsList;
+
+    @JsonUnwrapped
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "username", referencedColumnName = "username")
     private User user;
 
     public long getId() {
@@ -32,11 +55,11 @@ public class Trainee {
     }
 
     public String getAddress() {
-        return Address;
+        return address;
     }
 
     public void setAddress(String address) {
-        Address = address;
+        this.address = address;
     }
 
     public User getUser() {
@@ -47,12 +70,28 @@ public class Trainee {
         this.user = user;
     }
 
+    public List<Trainer> getTrainersList() {
+        return trainersList;
+    }
+
+    public void setTrainersList(List<Trainer> trainersList) {
+        this.trainersList = trainersList;
+    }
+
+    public List<Training> getTrainingsList() {
+        return trainingsList;
+    }
+
+    public void setTrainingsList(List<Training> trainingsList) {
+        this.trainingsList = trainingsList;
+    }
+
     @Override
     public String toString() {
         return "Trainee{" +
                 "id=" + id +
                 ", dateOfBirth=" + dateOfBirth +
-                ", Address='" + Address + '\'' +
+                ", address='" + address + '\'' +
                 ", user=" + user +
                 '}';
     }

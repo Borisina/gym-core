@@ -12,6 +12,10 @@ public class AuthData {
         this.password = password;
     }
 
+    public void validate() throws IllegalArgumentException{
+
+    }
+
     public String getUsername() {
         return username;
     }
