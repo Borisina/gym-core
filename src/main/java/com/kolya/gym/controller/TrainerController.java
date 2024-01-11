@@ -48,11 +48,11 @@ public class TrainerController {
         try{
             trainerData.validate();
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
         AuthData authData = trainerService.create(transactionId, trainerData);
-        logger.info("Transaction ID: {}, OK, Trainer {} was created", transactionId,  authData.getUsername());
+        logger.info("Transaction ID: {}, 201 CREATED, Trainer {} was created", transactionId,  authData.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(authData);
     }
 
@@ -68,10 +68,10 @@ public class TrainerController {
         try{
             userService.validateUsername(username);
             Trainer trainer = trainerService.getByUsername(transactionId, username);
-            logger.info("Transaction ID: {}, OK, Trainer was returned {}", transactionId, trainer);
+            logger.info("Transaction ID: {}, 200 OK, Trainer was returned {}", transactionId, trainer);
             return ResponseEntity.status(HttpStatus.OK).body(trainer);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -91,10 +91,10 @@ public class TrainerController {
                     .orElseThrow(()-> new IllegalArgumentException("isActive is required"));
             trainerData.validate();
             Trainer trainer = trainerService.update(transactionId, trainerData,username);
-            logger.info("Transaction ID: {}, OK, Trainer was updated {}", transactionId, trainer);
+            logger.info("Transaction ID: {}, 200 OK, Trainer was updated {}", transactionId, trainer);
             return ResponseEntity.status(HttpStatus.OK).body(trainer);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -111,10 +111,10 @@ public class TrainerController {
         try{
             userService.validateUsername(username);
             List<Trainer> trainers = trainerService.getNotAssignedOnTrainee(transactionId, username);
-            logger.info("Transaction ID: {}, OK, List of active trainers without trainees was returned {}", transactionId, trainers);
+            logger.info("Transaction ID: {}, 200 OK, List of active trainers without trainees was returned {}", transactionId, trainers);
             return ResponseEntity.status(HttpStatus.OK).body(trainers);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -129,11 +129,12 @@ public class TrainerController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, PATCH /trainers/{}/switch-active-status was called",transactionId, username);
         try{
+            userService.validateUsername(username);
             boolean status = trainerService.changeActiveStatus(transactionId, username);
-            logger.info("Transaction ID: {}, OK, Trainer's active status was switched to {}", transactionId, status);
+            logger.info("Transaction ID: {}, 200 OK, Trainer's active status was switched to {}", transactionId, status);
             return ResponseEntity.status(HttpStatus.OK).body("Active status switched to "+status);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

@@ -53,10 +53,10 @@ public class TrainingController {
         logger.info("Transaction ID: {}, POST /trainings was called with body {}", transactionId, trainingData);
         try{
             Training training = trainingService.create(transactionId, trainingData);
-            logger.info("Transaction ID: {}, OK, Training was created {}", transactionId, training);
+            logger.info("Transaction ID: {}, 200 OK, Training was created {}", transactionId, training);
             return ResponseEntity.status(HttpStatus.CREATED).body(training);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -78,10 +78,10 @@ public class TrainingController {
                 trainingCriteria.validate();
                 trainings = trainingService.getByTraineeUsernameAndCriteria(transactionId, username,trainingCriteria);
             }
-            logger.info("Transaction ID: {}, OK, List of trainings was returned {}", transactionId, trainings);
+            logger.info("Transaction ID: {}, 200 OK, List of trainings was returned {}", transactionId, trainings);
             return ResponseEntity.status(HttpStatus.OK).body(trainings);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -103,10 +103,10 @@ public class TrainingController {
                 trainingCriteria.validate();
                 trainings = trainingService.getByTrainerUsernameAndCriteria(transactionId, username,trainingCriteria);
             }
-            logger.info("Transaction ID: {}, OK, List of trainings was returned {}", transactionId, trainings);
+            logger.info("Transaction ID: {}, 200 OK, List of trainings was returned {}", transactionId, trainings);
             return ResponseEntity.status(HttpStatus.OK).body(trainings);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -114,14 +114,13 @@ public class TrainingController {
     @ApiOperation(value = "Get trainings types", response = ResponseEntity.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK, Training types returned"),
-            @ApiResponse(code = 400, message = "BAD_REQUEST, the request body or params are invalid or incorrect"),
     })
     @GetMapping("/trainings/training-types")
     public ResponseEntity<?> getTrainingTypes(){
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, GET /trainings/training-types was called with body", transactionId);
         List<TrainingType> trainingTypes = trainingService.getTrainingTypes(transactionId);
-        logger.info("Transaction ID: {}, OK, Training Types were returned", transactionId);
+        logger.info("Transaction ID: {}, 200 OK, Training Types were returned", transactionId);
         return ResponseEntity.status(HttpStatus.OK).body(trainingTypes);
     }
 }

@@ -46,10 +46,10 @@ public class AuthController {
         try{
             userService.validateChangePasswordData(changePasswordData);
             userService.changePassword(transactionId, changePasswordData);
-            logger.info("Transaction ID: {}, OK, Password changed for user {}.",transactionId, changePasswordData.getUsername());
+            logger.info("Transaction ID: {}, 200 OK, Password changed for user {}.",transactionId, changePasswordData.getUsername());
             return ResponseEntity.status(HttpStatus.OK).body("Password changed.");
         }catch (UsernameNotFoundException | IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }

@@ -49,12 +49,12 @@ public class TraineeController {
         try{
             traineeData.validate();
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
 
         AuthData authData = traineeService.create(transactionId, traineeData);
-        logger.info("Transaction ID: {}, CREATED, Trainee {}, was created.", transactionId, authData.getPassword());
+        logger.info("Transaction ID: {}, 201 CREATED, Trainee {}, was created.", transactionId, authData.getPassword());
         return ResponseEntity.status(HttpStatus.CREATED).body(authData);
     }
 
@@ -68,11 +68,12 @@ public class TraineeController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, GET /trainees/{} was called", transactionId, username);
         try{
+            userService.validateUsername(username);
             Trainee trainee = traineeService.getByUsername(transactionId, username);
-            logger.info("Transaction ID: {}, OK, Trainee was returned: {}",transactionId , trainee);
+            logger.info("Transaction ID: {}, 200 OK, Trainee was returned: {}",transactionId , trainee);
             return ResponseEntity.status(HttpStatus.OK).body(trainee);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -88,13 +89,14 @@ public class TraineeController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, PUT /trainees/{} was called with body {}",transactionId, username,traineeDataUpdate);
         try{
+            userService.validateUsername(username);
             traineeDataUpdate.setUsername(username);
             traineeDataUpdate.validate();
             Trainee trainee = traineeService.update(transactionId, traineeDataUpdate);
-            logger.info("Transaction ID: {}, OK, Trainee was updated: {}", transactionId, trainee);
+            logger.info("Transaction ID: {}, 200 OK, Trainee was updated: {}", transactionId, trainee);
             return ResponseEntity.status(HttpStatus.OK).body(trainee);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -110,11 +112,12 @@ public class TraineeController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, DELETE /trainees/{} was called", transactionId, username);
         try{
+            userService.validateUsername(username);
             Trainee trainee = traineeService.deleteByUsername(transactionId, username);
-            logger.info("Transaction ID: {}, OK, Trainee was deleted: {}", transactionId, trainee);
+            logger.info("Transaction ID: {}, 200 OK, Trainee was deleted: {}", transactionId, trainee);
             return ResponseEntity.status(HttpStatus.OK).body("Trainee deleted.");
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -129,11 +132,12 @@ public class TraineeController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, PUT /trainees/{}/trainers was called with body {}", transactionId, username, trainersList);
         try{
+            userService.validateUsername(username);
             List<Trainer> trainers = traineeService.updateList(transactionId, trainersList,username);
-            logger.info("Transaction ID: {}, OK, Trainee's traineersList was updated {}", transactionId, trainers);
+            logger.info("Transaction ID: {}, 200 OK, Trainee's traineersList was updated {}", transactionId, trainers);
             return ResponseEntity.status(HttpStatus.OK).body(trainers);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
@@ -148,11 +152,12 @@ public class TraineeController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, PATCH /trainees/{}/switch-active-status was called", transactionId, username);
         try{
+            userService.validateUsername(username);
             boolean status = traineeService.changeActiveStatus(transactionId, username);
-            logger.info("Transaction ID: {}, OK, Trainee's active status was switched to {}", transactionId, status);
+            logger.info("Transaction ID: {}, 200 OK, Trainee's active status was switched to {}", transactionId, status);
             return ResponseEntity.status(HttpStatus.OK).body("Active status switched to "+status);
         }catch (IllegalArgumentException e){
-            logger.info("Transaction ID: {}, BAD_REQUEST, {}", transactionId, e.getMessage());
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
