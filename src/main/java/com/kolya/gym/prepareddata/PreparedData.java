@@ -32,41 +32,41 @@ public class PreparedData {
         }};
 
         trainerDataList = new ArrayList<>(){{
-            add(new TrainerDataBuilder().setFirstName("Genadiy").setLastName("Tokov").setSpecialization("Super trainer").build());
+            add(new TrainerDataBuilder().setFirstName("Genadiy").setLastName("Tokov").setSpecialization(TrainingType.TYPE_1).build());
         }};
 
         wrongTrainerDataList = new ArrayList<>(){{
-            add(new TrainerDataBuilder().setFirstName("Genadiy").setLastName("Tokov").setSpecialization("   ").build());
+            add(new TrainerDataBuilder().setFirstName("Genadiy").setLastName("Tokov").build());
         }};
 
         trainingDataList = new ArrayList<>(){{
             add(new TrainingDataBuilder()
-                    .setTraineeId(1)
-                    .setTrainerId(1)
+                    .setTraineeUsername("Username1")
+                    .setTrainerUsername("Username2")
                     .setDuration(24)
                     .setTrainingName("Training Name 0")
                     .setTrainingType(TrainingType.TYPE_1)
                     .setTrainingDate(new Date())
                     .build());
             add(new TrainingDataBuilder()
-                    .setTraineeId(3)
-                    .setTrainerId(1)
+                    .setTraineeUsername("Username1")
+                    .setTrainerUsername("Username2")
                     .setDuration(12)
                     .setTrainingType(TrainingType.TYPE_2)
                     .setTrainingName("Training Name 2")
                     .setTrainingDate(new Date())
                     .build());
             add(new TrainingDataBuilder()
-                    .setTraineeId(3)
-                    .setTrainerId(1)
+                    .setTraineeUsername("Username1")
+                    .setTrainerUsername("Username2")
                     .setDuration(24)
                     .setTrainingType(TrainingType.TYPE_3)
                     .setTrainingName("Training Name 3")
                     .setTrainingDate(new Date())
                     .build());
             add(new TrainingDataBuilder()
-                    .setTraineeId(3)
-                    .setTrainerId(1)
+                    .setTraineeUsername("Username1")
+                    .setTrainerUsername("Username2")
                     .setDuration(36)
                     .setTrainingType(TrainingType.TYPE_3)
                     .setTrainingName("Training Name 3")
@@ -76,8 +76,8 @@ public class PreparedData {
 
         wrongTrainingDataList = new ArrayList<>(){{
             add(new TrainingDataBuilder()
-                    .setTraineeId(1)
-                    .setTrainerId(5)
+                    .setTraineeUsername("Username1")
+                    .setTrainerUsername("Username2")
                     .setDuration(24)
                     .setTrainingType(TrainingType.TYPE_1)
                     .setTrainingName("Training Name 1")

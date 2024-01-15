@@ -1,6 +1,7 @@
 package com.kolya.gym.domain;
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.*;
+import javax.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -13,9 +14,11 @@ public class Training{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @JsonBackReference("username")
     @ManyToOne
     @JoinColumn(name="trainer_id")
     private Trainer trainer;
+
 
     @ManyToOne
     @JoinColumn(name="trainee_id")
@@ -25,10 +28,12 @@ public class Training{
 
     //@ElementCollection(targetClass = TrainingType.class, fetch = FetchType.EAGER)
     //@CollectionTable(name = "training_type", joinColumns = @JoinColumn(name = "training_id"))
-    @Enumerated(EnumType.STRING)
+    @ManyToOne
+    @JoinColumn(name = "training_type_id")
     private TrainingType trainingType;
 
-    @Temporal(TemporalType.DATE)
+    //@Temporal(TemporalType.DATE)
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date trainingDate;
     private int duration;
 

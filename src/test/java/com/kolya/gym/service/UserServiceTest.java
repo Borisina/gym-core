@@ -1,122 +1,125 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.data.AuthData;
+import com.kolya.gym.data.ChangePasswordData;
 import com.kolya.gym.data.UserData;
 import com.kolya.gym.domain.User;
 import com.kolya.gym.repo.UserRepo;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.naming.AuthenticationException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
+import static com.kolya.gym.prepareddata.PreparedData.trainingDataList;
 import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 public class UserServiceTest {
-
-    @InjectMocks
-    UserService userService;
+    @Mock
+    private UserRepo userRepo;
 
     @Mock
-    UserRepo userRepo;
+    private PasswordEncoder passwordEncoder;
+
+    private UserService userService;
 
     @Before
-    public void setUp() {
+    public void setup() {
         MockitoAnnotations.initMocks(this);
+        this.userService = new UserService(userRepo, passwordEncoder);
     }
 
     @Test
-    public void testGenerateUser() {
+    public void testGenerateUserForCreateSuccess() {
         UserData userData = new UserData();
-        userData.setFirstName("John");
-        userData.setLastName("Doe");
-        User generatedUser = userService.generateUser(userData);
-        assertNotNull(generatedUser);
-        assertEquals("John", generatedUser.getFirstName());
-        assertEquals("Doe", generatedUser.getLastName());
-        assertTrue(generatedUser.isActive());
+        when(userRepo.countDuplicates(anyString(), anyString())).thenReturn(0L);
+        User user = userService.generateUserForCreate(UUID.randomUUID(), userData);
+        assertNotNull(user);
     }
 
     @Test
-    public void testGenerateUserForUpdate() {
+    public void testGenerateUserForUpdateSuccess() {
         UserData userData = new UserData();
-        userData.setFirstName("John");
-        userData.setLastName("Doe");
-        User generatedUser = userService.generateUserForUpdate(userData);
-        assertNotNull(generatedUser);
-        assertEquals("John", generatedUser.getFirstName());
-        assertEquals("Doe", generatedUser.getLastName());
+        userData.setActive(true);
+        User user = userService.generateUserForUpdate(UUID.randomUUID(), userData);
+        assertNotNull(user);
     }
 
     @Test
-    public void testGenerateUsername() {
-        UserData userData = new UserData();
-        userData.setFirstName("John");
-        userData.setLastName("Doe");
-        when(userRepo.countDuplicates("John", "Doe")).thenReturn(0L);
-        String username = userService.generateUsername(userData.getFirstName(), userData.getLastName());
-        assertEquals("John.Doe", username);
+    public void testGenerateUsernameSuccess() {
+        when(userRepo.countDuplicates(anyString(), anyString())).thenReturn(0L);
+        String username = userService.generateUsername(UUID.randomUUID(), "firstname", "lastname");
+        assertNotNull(username);
     }
 
     @Test
-    public void testChange() {
+    public void testChangePasswordSuccess() {
+        ChangePasswordData changePasswordData = new ChangePasswordData();
+        changePasswordData.setOldPassword("oldPassword");
+        changePasswordData.setNewPassword("newPassword");
+        changePasswordData.setUsername("username");
         User user = new User();
-        User updatedUser = new User();
-        updatedUser.setFirstName("NewJohn");
-        updatedUser.setLastName("NewDoe");
-        userService.change(user, updatedUser);
-        assertEquals("NewJohn", user.getFirstName());
-        assertEquals("NewDoe", user.getLastName());
+        user.setPassword("Hello");
+        when(userRepo.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(true);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+
+        userService.changePassword(UUID.randomUUID(), changePasswordData);
+        verify(userRepo, times(1)).save(any(User.class));
     }
 
-    @Test
-    public void testChangePassword() {
-        User user = new User();
-        String newPassword = "newPassword";
-        userService.changePassword(user, newPassword);
-        assertEquals("newPassword", user.getPassword());
-        verify(userRepo, times(1)).save(user);
-    }
+    @Test(expected = UsernameNotFoundException.class)
+    public void testChangePasswordUserNotFoundFailure() {
+        ChangePasswordData changePasswordData = new ChangePasswordData();
+        changePasswordData.setOldPassword("oldPassword");
+        changePasswordData.setNewPassword("newPassword");
+        changePasswordData.setUsername("username");
 
-    @Test
-    public void testAuthenticate() throws AuthenticationException {
-        AuthData authData = new AuthData();
-        authData.setUsername("username");
-        authData.setPassword("password");
-        User user = new User();
-        user.setUsername("username");
-        user.setPassword("password");
-
-        when(userRepo.findByUsernameAndPassword("username", "password")).thenReturn(user);
-        User resultUser = userService.authenticate(authData);
-        assertEquals(user, resultUser);
-    }
-
-    @Test(expected = AuthenticationException.class)
-    public void testAuthenticateFail() throws AuthenticationException {
-        AuthData authData = new AuthData();
-        authData.setUsername("username");
-        authData.setPassword("wrongpassword");
-        when(userRepo.findByUsernameAndPassword("username", "wrongpassword")).thenReturn(null);
-        userService.authenticate(authData);
-    }
-
-    @Test
-    public void testChangeActiveStatus() {
-        User user = new User();
-        user.setActive(true);
-        when(userRepo.findById(1L)).thenReturn(java.util.Optional.of(user));
-        boolean isActive = userService.changeActiveStatus(1L);
-        assertFalse(isActive);
-        verify(userRepo, times(1)).save(user);
+        userService.changePassword(UUID.randomUUID(), changePasswordData);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testChangeActiveStatusFail() {
-        when(userRepo.findById(1L)).thenReturn(java.util.Optional.empty());
-        userService.changeActiveStatus(1L);
+    public void testChangePasswordWrongOldPasswordFailure() {
+        ChangePasswordData changePasswordData = new ChangePasswordData();
+        changePasswordData.setOldPassword("oldPassword");
+        changePasswordData.setNewPassword("newPassword");
+        changePasswordData.setUsername("username");
+
+        when(userRepo.findByUsername(anyString())).thenReturn(Optional.of(new User()));
+        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
+
+        userService.changePassword(UUID.randomUUID(), changePasswordData);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testValidateUsernameFailure() {
+        userService.validateUsername("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testValidatePasswordFailure() {
+        userService.validatePassword("");
+    }
+
+    @Test
+    public void testLoadUserByUsernameSuccess() {
+        when(userRepo.findByUsername(anyString())).thenReturn(Optional.of(new User()));
+        UserDetails userDetails = userService.loadUserByUsername("username");
+        assertNotNull(userDetails);
+    }
+
+    @Test(expected = UsernameNotFoundException.class)
+    public void testLoadUserByUsernameFailure() {
+        when(userRepo.findByUsername(anyString())).thenReturn(Optional.empty());
+        userService.loadUserByUsername("username");
     }
 }

@@ -1,52 +1,68 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.data.AuthData;
+import com.kolya.gym.data.ChangePasswordData;
 import com.kolya.gym.data.UserData;
 import com.kolya.gym.domain.User;
 import com.kolya.gym.repo.UserRepo;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.naming.AuthenticationException;
+import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
 
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepo userRepo) {
+    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    public User generateUser(UserData userData){
-        String firstName = userData.getFirstName();
-        String lastName = userData.getLastName();
+    private User generateUser(UserData userData){
         User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setUsername(generateUsername(firstName,lastName));
+        user.setFirstName(userData.getFirstName());
+        user.setLastName(userData.getLastName());
+        return user;
+    }
+
+    public User generateUserForCreate(UUID transactionId, UserData userData){
+        logger.info("Transaction ID: {}, Generating user for create from UserData: {}", transactionId, userData);
+        User user = generateUser(userData);
+        user.setUsername(generateUsername(transactionId, userData.getFirstName(),userData.getLastName()));
         user.setPassword(generatePassword());
         user.setActive(true);
+        logger.info("Transaction ID: {}, User was returned {}", transactionId, user);
         return user;
     }
 
-    public User generateUserForUpdate(UserData userData){
-        String firstName = userData.getFirstName();
-        String lastName = userData.getLastName();
-        User user = new User();
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
+    public User generateUserForUpdate(UUID transactionId, UserData userData){
+        logger.info("Transaction ID: {}, Generating user for update from UserData: {}", transactionId, userData);
+        User user = generateUser(userData);
+        user.setActive(userData.isActive());
+        logger.info("Transaction ID: {}, User was returned {}", transactionId, user);
         return user;
     }
 
-    public String generateUsername(String firstName, String lastName){
+    public String generateUsername(UUID transactionId, String firstName, String lastName){
+        logger.info("Transaction ID: {}, Generating username (firstName = {}, lastName = {})", transactionId, firstName, lastName);
         String username = firstName+"."+ lastName;
         long count = userRepo.countDuplicates(firstName,lastName);
         if (count!=0){
             username=username+count;
         }
+        logger.info("Transaction ID: {}, Username generated: {}", transactionId, username);
         return username;
     }
 
@@ -56,49 +72,47 @@ public class UserService {
     }
 
     public void change(User user, User updatedUser){
-        boolean isUpdated = false;
-        if (updatedUser!=null){
-            String firstName = user.getFirstName();
-            String lastName = user.getLastName();
-            if (updatedUser.getFirstName()!=null){
-                firstName = updatedUser.getFirstName();
-                isUpdated=true;
-            }
-            if (updatedUser.getLastName()!=null){
-                lastName = updatedUser.getLastName();
-                isUpdated=true;
-            }
-            if (isUpdated){
-                user.setUsername(generateUsername(firstName,lastName));
-                user.setLastName(lastName);
-                user.setFirstName(firstName);
-            }
-        }
+            user.setLastName(updatedUser.getLastName());
+            user.setFirstName(updatedUser.getFirstName());
+            user.setActive(updatedUser.isActive());
     }
 
-    public void changePassword(User user, String newPassword){
-        user.setPassword(newPassword);
+    public void changePassword(UUID transactionId, ChangePasswordData changePasswordData) throws IllegalArgumentException, UsernameNotFoundException{
+        logger.info("Transaction ID: {}, Changing password for user {}", transactionId, changePasswordData.getUsername());
+        User user = (User) loadUserByUsername(changePasswordData.getUsername());
+        if (!passwordEncoder.matches(changePasswordData.getOldPassword(),user.getPassword())){
+            throw new IllegalArgumentException("Wrong password.");
+        }
+        user.setPassword(encodePassword(changePasswordData.getNewPassword()));
+        logger.info("Transaction ID: {}, Password was changed for user {}", transactionId, changePasswordData.getUsername());
         userRepo.save(user);
     }
 
-    public User authenticate(AuthData authData) throws AuthenticationException{
-        User user = userRepo.findByUsernameAndPassword(authData.getUsername(),authData.getPassword());
-        if (user==null){
-            throw new AuthenticationException("Authentication Exception.");
-        }
-        return user;
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepo.findByUsername(username)
+                .orElseThrow(()->new UsernameNotFoundException("Where is no user with username = "+username));
     }
 
-    public boolean changeActiveStatus(long id){
-        User user = userRepo.findById(id).orElseThrow(()-> new IllegalArgumentException("There is no user with id = "+id));
-        boolean newStatus = !user.isActive();
-        user.setActive(newStatus);
-        userRepo.save(user);
-        if (newStatus){
-            System.out.println("User (id = "+id+") activated.");
-        }else{
-            System.out.println("User (id = "+id+") deactivated.");
+    public String encodePassword(String password){
+        return passwordEncoder.encode(password);
+    }
+
+    public void validateChangePasswordData(ChangePasswordData data) throws IllegalArgumentException{
+        validateUsername(data.getUsername());
+        validatePassword(data.getNewPassword());
+        validatePassword(data.getOldPassword());
+    }
+
+    public void validateUsername(String username) throws IllegalArgumentException{
+        if (StringUtils.isBlank(username)){
+            throw new IllegalArgumentException("Wrong parameter 'username': cant be empty");
         }
-        return newStatus;
+    }
+
+    public void validatePassword(String password) throws IllegalArgumentException{
+        if (StringUtils.isBlank(password)){
+            throw new IllegalArgumentException("Wrong parameter 'password': cant be empty");
+        }
     }
 }

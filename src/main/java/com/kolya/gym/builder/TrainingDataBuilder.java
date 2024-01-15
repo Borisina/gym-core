@@ -12,13 +12,13 @@ public class TrainingDataBuilder {
         trainingData = new TrainingData();
     }
 
-    public TrainingDataBuilder setTraineeId(long id){
-        trainingData.setTraineeId(id);
+    public TrainingDataBuilder setTraineeUsername(String username){
+        trainingData.setTraineeUsername(username);
         return this;
     }
 
-    public TrainingDataBuilder setTrainerId(long id){
-        trainingData.setTrainerId(id);
+    public TrainingDataBuilder setTrainerUsername(String username){
+        trainingData.setTrainerUsername(username);
         return this;
     }
 

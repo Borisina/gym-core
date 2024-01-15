@@ -1,27 +1,28 @@
 package com.kolya.gym.domain;
 
 
-import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.persistence.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name="usr")
-public class User{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+public class User implements UserDetails {
     private String firstName;
     private String lastName;
+
+    @Id
     private String username;
+    @JsonIgnore
     private String password;
+    @JsonProperty("isActive")
     private boolean isActive;
 
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
 
     public String getFirstName() {
         return firstName;
@@ -43,8 +44,38 @@ public class User{
         return username;
     }
 
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isEnabled() {
+        return isActive;
+    }
+
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    @JsonIgnore
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
     }
 
     public String getPassword() {
@@ -55,10 +86,11 @@ public class User{
         this.password = password;
     }
 
+    @JsonIgnore
     public boolean isActive() {
         return isActive;
     }
-
+    @JsonIgnore
     public void setActive(boolean active) {
         isActive = active;
     }
@@ -66,7 +98,6 @@ public class User{
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", username='" + username + '\'' +

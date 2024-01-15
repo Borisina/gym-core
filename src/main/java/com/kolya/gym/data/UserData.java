@@ -1,9 +1,14 @@
 package com.kolya.gym.data;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class UserData {
     private String firstName;
     private String lastName;
+
+    @JsonProperty("isActive")
+    private Boolean isActive;
 
     public void validate() throws IllegalArgumentException{
         if (firstName==null)  throw new IllegalArgumentException("Wrong parameter 'firstName': can't be null");
@@ -38,5 +43,22 @@ public class UserData {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public Boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    @Override
+    public String toString() {
+        return "UserData{" +
+                "firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", isActive=" + isActive +
+                '}';
     }
 }

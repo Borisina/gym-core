@@ -1,6 +1,7 @@
 package com.kolya.gym.builder;
 
 import com.kolya.gym.data.TrainerData;
+import com.kolya.gym.domain.TrainingType;
 
 public class TrainerDataBuilder {
     private final TrainerData trainerData;
@@ -19,7 +20,7 @@ public class TrainerDataBuilder {
         return this;
     }
 
-    public TrainerDataBuilder setSpecialization(String specialization){
+    public TrainerDataBuilder setSpecialization(TrainingType specialization){
         trainerData.setSpecialization(specialization);
         return this;
     }

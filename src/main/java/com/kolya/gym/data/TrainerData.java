@@ -1,19 +1,31 @@
 package com.kolya.gym.data;
 
 
+import com.kolya.gym.domain.TrainingType;
+
+
 public class TrainerData extends UserData{
-    private String specialization;
+    private TrainingType specialization;
 
     public void validate() throws IllegalArgumentException{
-        if (specialization==null || specialization.isBlank()) throw new IllegalArgumentException("Wrong parameter 'specialization': can't be empty");
+        if(specialization==null){
+            throw new IllegalArgumentException("Parameter 'specialization' is required");
+        }
         super.validate();
     }
 
-    public String getSpecialization() {
+    public void setSpecialization(TrainingType specialization) {
+        this.specialization = specialization;
+    }
+
+    public TrainingType getSpecialization() {
         return specialization;
     }
 
-    public void setSpecialization(String specialization) {
-        this.specialization = specialization;
+    @Override
+    public String toString() {
+        return "TrainerData{" +
+                "specialization=" + specialization +
+                '}';
     }
 }

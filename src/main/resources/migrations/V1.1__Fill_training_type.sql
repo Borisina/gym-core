@@ -1,0 +1,1 @@
+INSERT INTO training_type VALUES (1, 'TYPE_1'), (2, 'TYPE_2'),(3, 'TYPE_3');

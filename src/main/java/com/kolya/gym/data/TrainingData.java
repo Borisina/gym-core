@@ -1,21 +1,21 @@
 package com.kolya.gym.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kolya.gym.domain.TrainingType;
 
 import java.util.Date;
 
 public class TrainingData {
-    private long trainerId;
-    private long traineeId;
+    private String trainerUsername;
+    private String traineeUsername;
     private String trainingName;
     private TrainingType trainingType;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date trainingDate;
     private int duration;
 
 
     public void validate() throws IllegalArgumentException{
-        if (trainerId<=0) throw new IllegalArgumentException("Wrong parameter 'trainerId' = "+trainerId+": can't be <=0");
-        if (traineeId<=0) throw new IllegalArgumentException("Wrong parameter 'trainerId' = "+traineeId+": can't be <=0");
         if (trainingName==null || trainingName.isBlank()) throw new IllegalArgumentException("Wrong parameter 'trainingName': can't be empty");
         if (trainingType==null) throw new IllegalArgumentException("Wrong parameter 'trainingType': can't be null");
         if (trainingDate==null) throw new IllegalArgumentException("Wrong parameter 'trainingDate': can't be empty");
@@ -23,20 +23,20 @@ public class TrainingData {
     }
 
 
-    public long getTrainerId() {
-        return trainerId;
+    public String getTrainerUsername() {
+        return trainerUsername;
     }
 
-    public void setTrainerId(long trainerId) {
-        this.trainerId = trainerId;
+    public void setTrainerUsername(String trainerUsername) {
+        this.trainerUsername = trainerUsername;
     }
 
-    public long getTraineeId() {
-        return traineeId;
+    public String getTraineeUsername() {
+        return traineeUsername;
     }
 
-    public void setTraineeId(long traineeId) {
-        this.traineeId = traineeId;
+    public void setTraineeUsername(String traineeUsername) {
+        this.traineeUsername = traineeUsername;
     }
 
     public String getTrainingName() {

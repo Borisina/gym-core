@@ -1,19 +1,28 @@
 package com.kolya.gym.data;
 
+
 public class TraineeDataUpdate extends TraineeData{
-    long id;
+    private String username;
 
     @Override
     public void validate() throws IllegalArgumentException {
-        if (id<=0) throw new IllegalArgumentException("Trainee id can't be <=0");
+        if (username==null || username.isBlank()) throw new IllegalArgumentException("Username cant be empty.");
+        if (isActive()==null) throw new IllegalArgumentException("isActive is required");
         super.validateCharacters();
     }
 
-    public long getId() {
-        return id;
+    public String getUsername() {
+        return username;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    @Override
+    public String toString() {
+        return "TraineeDataUpdate{" +
+                "username='" + username + '\'' +
+                "traineeData = "+super.toString()+'}';
     }
 }

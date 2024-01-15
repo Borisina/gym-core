@@ -1,7 +1,8 @@
 package com.kolya.gym.config;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.flywaydb.core.Flyway;
+import org.hibernate.EmptyInterceptor;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,6 +14,7 @@ import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -20,16 +22,11 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ComponentScan("com.kolya.gym")
-@PropertySource("classpath:application.properties")
 @EnableTransactionManagement
 @EnableJpaRepositories("com.kolya.gym.repo")
+@ComponentScan("com.kolya.gym")
+@PropertySource("classpath:application.properties")
 public class Config {
-    @Bean
-    public Logger logger(){
-        return LogManager.getLogger(Config.class);
-    }
-
     @Value("${spring.datasource.url}")
     private String url;
 
@@ -71,6 +68,14 @@ public class Config {
         return dataSource;
     }
 
+    @Bean(initMethod = "migrate")
+    public Flyway flyway(DataSource dataSource) {
+        return Flyway.configure()
+                .dataSource(dataSource)
+                .locations("classpath:migrations")
+                .baselineOnMigrate(true)
+                .load();
+    }
 
     @Bean
     public PlatformTransactionManager transactionManager() {
@@ -79,11 +84,24 @@ public class Config {
         return transactionManager;
     }
 
+    @Bean
+    public EmptyInterceptor emptyInterceptor() {
+        return new EnumAsEntityInterceptor();
+    }
+
     Properties additionalProperties() {
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", ddlAuto);
-        properties.setProperty("hibernate.dialect", dialect);
+        properties.put("hibernate.ejb.interceptor", emptyInterceptor());
         properties.setProperty("hibernate.physical_naming_strategy", "com.kolya.gym.config.SnakeCaseNamingStrategy");
         return properties;
     }
+
+    @Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+
+
 }

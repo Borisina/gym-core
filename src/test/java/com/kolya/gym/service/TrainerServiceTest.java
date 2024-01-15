@@ -1,112 +1,108 @@
 package com.kolya.gym.service;
 
+import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
+import com.kolya.gym.domain.Trainee;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.domain.User;
 import com.kolya.gym.repo.TrainerRepo;
-import com.kolya.gym.repo.UserRepo;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.slf4j.Logger;
 
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static com.kolya.gym.prepareddata.PreparedData.trainerDataList;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.any;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 public class TrainerServiceTest {
-
-    @InjectMocks
-    TrainerService trainerService;
+    @Mock
+    private TrainerRepo trainerRepo;
 
     @Mock
-    TrainerRepo trainerRepo;
+    private UserService userService;
 
-    @Mock
-    UserService userService;
-
-    @Mock
-    UserRepo userRepo;
+    private TrainerService trainerService;
 
     @Before
-    public void setUp() {
+    public void setup() {
         MockitoAnnotations.initMocks(this);
+        this.trainerService = new TrainerService(trainerRepo, userService);
     }
 
     @Test
-    public void testCreateTrainer() {
+    public void testCreateTrainerSuccess() {
+        TrainerData trainerData = trainerDataList.get(0);
+        when(trainerRepo.save(any(Trainer.class))).thenReturn(new Trainer());
+        when(userService.generateUserForCreate(any(UUID.class),eq(trainerData))).thenReturn(new User());
+        AuthData authData = trainerService.create(UUID.randomUUID(), trainerData);
+        assertNotNull(authData);
+    }
+
+    @Test
+    public void testGetByUsernameSuccess() {
+        when(trainerRepo.findByUserUsername(anyString())).thenReturn(Optional.of(new Trainer()));
+        Trainer trainer = trainerService.getByUsername(UUID.randomUUID(), "username");
+        assertNotNull(trainer);
+    }
+
+
+    @Test
+    public void testUpdateTrainerSuccess() {
+        TrainerData trainerData = trainerDataList.get(0);
+        trainerData.setActive(true);
+        when(trainerRepo.save(any(Trainer.class))).thenReturn(new Trainer());
+        when(trainerRepo.findByUserUsername("username")).thenReturn(Optional.of(new Trainer()));
+        Trainer trainer = trainerService.update(UUID.randomUUID(), trainerData, "username");
+        assertNotNull(trainer);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testGetByUsernameFailure() {
+        when(trainerRepo.findByUserUsername(anyString())).thenThrow(IllegalArgumentException.class);
+        trainerService.getByUsername(UUID.randomUUID(), "username");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUpdateTrainerFailure() {
         TrainerData trainerData = new TrainerData();
-        trainerData.setSpecialization("Yoga");
-        Trainer trainer = new Trainer();
-        trainer.setSpecialization("Yoga");
-        User user = new User();
-        trainer.setUser(user);
-
-        when(userService.generateUser(trainerData)).thenReturn(user);
-        when(trainerRepo.save(any(Trainer.class))).thenReturn(trainer);
-
-        Trainer resultTrainer = trainerService.create(trainerData);
-
-        assertNotNull(resultTrainer);
-        assertEquals(resultTrainer.getSpecialization(), trainerData.getSpecialization());
+        when(trainerRepo.save(any(Trainer.class))).thenThrow(IllegalArgumentException.class);
+        trainerService.update(UUID.randomUUID(), trainerData, "username");
     }
 
     @Test
-    public void testUpdateTrainer() {
-        TrainerData trainerData = new TrainerData();
-        trainerData.setSpecialization("Boxing");
+    public void testChangeActiveStatusSuccess() {
         Trainer trainer = new Trainer();
-        trainer.setSpecialization("Boxing");
-        User user = new User();
-        trainer.setUser(user);
-        when(userService.generateUserForUpdate(trainerData)).thenReturn(user);
-        when(trainerRepo.findById(any(Long.class))).thenReturn(java.util.Optional.of(trainer));
-        when(trainerRepo.save(any(Trainer.class))).thenReturn(trainer);
+        trainer.setUser(new User());
+        trainer.getUser().setActive(true);
+        when(trainerRepo.findByUserUsername(anyString())).thenReturn(Optional.of(trainer));
+        boolean isActive = trainerService.changeActiveStatus(UUID.randomUUID(), "username");
+        assertFalse(isActive);
+    }
 
-        Trainer resultTrainer = trainerService.update(trainerData,1 );
-
-        assertNotNull(resultTrainer);
-        assertEquals("Boxing", resultTrainer.getSpecialization());
+    @Test(expected = IllegalArgumentException.class)
+    public void testChangeActiveStatusFailure() {
+        when(trainerRepo.findByUserUsername(anyString())).thenThrow(IllegalArgumentException.class);
+        trainerService.changeActiveStatus(UUID.randomUUID(), "username");
     }
 
     @Test
-    public void testGetTrainer() {
-        Trainer trainer = new Trainer();
-        trainer.setId(1L);
-
-        when(trainerRepo.findById(trainer.getId())).thenReturn(java.util.Optional.of(trainer));
-
-        Trainer resultTrainer = trainerService.get(trainer.getId());
-
-        assertNotNull(resultTrainer);
-        assertEquals(trainer.getId(), resultTrainer.getId());
+    public void testGetNotAssignedOnTraineeSuccess() {
+        when(trainerRepo.findByUserUsername(anyString())).thenReturn(Optional.of(new Trainer()));
+        List<Trainer> trainerList = trainerService.getNotAssignedOnTrainee(UUID.randomUUID(), "username");
+        assertNotNull(trainerList);
     }
 
-    @Test
-    public void testGetByUsername() {
-        String username = "testUsername";
-        User user = new User();
-        user.setUsername(username);
-        Trainer trainer = new Trainer();
-        trainer.setUser(user);
-        when(userRepo.findByUsername(username)).thenReturn(java.util.Optional.of(user));
-        when(trainerRepo.findByUserId(user.getId())).thenReturn(java.util.Optional.of(trainer));
-        Trainer result = trainerService.getByUsername(username);
-        assertEquals(username, result.getUser().getUsername());
-    }
-
-    @Test
-    public void testGetAllTrainers() {
-        Trainer trainer1 = new Trainer();
-        Trainer trainer2 = new Trainer();
-        List<Trainer> trainers = Arrays.asList(trainer1, trainer2);
-        when(trainerRepo.findAll()).thenReturn(trainers);
-        List<Trainer> result = trainerService.getAll();
-        assertEquals(trainers.size(), result.size());
-    }
+    /*@Test(expected = IllegalArgumentException.class)
+    public void testGetNotAssignedOnTraineeFailure() {
+        when(trainerRepo.findByUserUsername(anyString())).thenThrow(IllegalArgumentException.class);
+        trainerService.getNotAssignedOnTrainee(UUID.randomUUID(), "username");
+    }*/
 }

@@ -1,5 +1,6 @@
 package com.kolya.gym.data;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.kolya.gym.domain.TrainingType;
 
 import java.util.Date;
@@ -7,15 +8,14 @@ import java.util.Date;
 public class TrainingCriteria {
     private String trainingName;
     private TrainingType trainingType;
+
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date trainingDateFrom;
+
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date trainingDateTo;
-    private Integer durationMin;
-    private Integer durationMax;
 
     public void validate() throws IllegalArgumentException{
-        if (durationMin!=null && durationMin<0) throw new IllegalArgumentException("Wrong parameter durationMin: cant be negative ");
-        if (durationMax!=null && durationMax<0) throw new IllegalArgumentException("Wrong parameter durationMax: cant be negative ");
-        if (durationMin!=null && durationMax!=null && durationMin>durationMax) throw new IllegalArgumentException("Wrong parameters: durationMax<durationMin");
         if (trainingDateFrom!=null && trainingDateTo!=null && trainingDateFrom.after(trainingDateTo)) throw new IllegalArgumentException("Wrong parameters: trainingDateTo<trainingDateFrom");
     }
 
@@ -49,21 +49,5 @@ public class TrainingCriteria {
 
     public void setTrainingDateTo(Date trainingDateTo) {
         this.trainingDateTo = trainingDateTo;
-    }
-
-    public Integer getDurationMin() {
-        return durationMin;
-    }
-
-    public void setDurationMin(Integer durationMin) {
-        this.durationMin = durationMin;
-    }
-
-    public Integer getDurationMax() {
-        return durationMax;
-    }
-
-    public void setDurationMax(Integer durationMax) {
-        this.durationMax = durationMax;
     }
 }
