@@ -1,5 +1,6 @@
 package com.kolya.gym.service;
 
+import com.kolya.gym.controller.TrainingController;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
@@ -7,6 +8,7 @@ import com.kolya.gym.domain.Training;
 import com.kolya.gym.domain.User;
 import com.kolya.gym.repo.TrainerRepo;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,17 +19,14 @@ import java.util.UUID;
 @Service
 public class TrainerService {
 
+    private final Logger logger = LoggerFactory.getLogger(TrainerService.class);
     private final TrainerRepo trainerRepo;
     private final UserService userService;
-    private final Logger logger;
-
-
 
     @Autowired
-    public TrainerService(TrainerRepo trainerRepo, UserService userService, Logger logger) {
+    public TrainerService(TrainerRepo trainerRepo, UserService userService) {
         this.trainerRepo = trainerRepo;
         this.userService = userService;
-        this.logger = logger;
     }
 
     @Transactional

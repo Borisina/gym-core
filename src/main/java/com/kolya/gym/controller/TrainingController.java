@@ -11,12 +11,14 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,21 +26,17 @@ import java.util.UUID;
 @Api(value = "API for trainings", tags = "Trainings")
 @Controller
 public class TrainingController {
+
+    private final Logger logger = LoggerFactory.getLogger(TrainingController.class);
     private final TrainingService trainingService;
-
     private final TrainerService trainerService;
-
     private final TraineeService traineeService;
 
-    private final Logger logger;
-
-
     @Autowired
-    public TrainingController(TrainingService trainingService, TrainerService trainerService, TraineeService traineeService, Logger logger) {
+    public TrainingController(TrainingService trainingService, TrainerService trainerService, TraineeService traineeService) {
         this.trainingService = trainingService;
         this.trainerService = trainerService;
         this.traineeService = traineeService;
-        this.logger = logger;
     }
 
 
@@ -96,7 +94,7 @@ public class TrainingController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, GET /trainers/{}/trainings was called with body {}", transactionId, username, trainingCriteria);
         try{
-            List<TrainingData> trainings=null;
+            List<TrainingData> trainings= Collections.emptyList();;
             if (trainingService.isEmptyCriteria(trainingCriteria)){
                 trainings = trainingService.trainingListToTrainingDataList(trainerService.getTrainings(transactionId, username));
             }else{

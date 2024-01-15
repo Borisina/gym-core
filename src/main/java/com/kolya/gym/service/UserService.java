@@ -7,6 +7,7 @@ import com.kolya.gym.repo.UserRepo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,16 +20,14 @@ import java.util.UUID;
 @Service
 public class UserService implements UserDetailsService {
 
+    private final Logger logger = LoggerFactory.getLogger(UserService.class);
     private final UserRepo userRepo;
     private final PasswordEncoder passwordEncoder;
 
-    private  final Logger logger;
-
     @Autowired
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder, Logger logger) {
+    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
-        this.logger = logger;
     }
 
     private User generateUser(UserData userData){
@@ -87,17 +86,6 @@ public class UserService implements UserDetailsService {
         user.setPassword(encodePassword(changePasswordData.getNewPassword()));
         logger.info("Transaction ID: {}, Password was changed for user {}", transactionId, changePasswordData.getUsername());
         userRepo.save(user);
-    }
-
-
-    //@Transactional
-    public boolean changeActiveStatus(UUID transactionId, String username){
-        logger.info("Transaction ID: {}, Switching active status for user {}", transactionId, username);
-        User user = userRepo.findByUsername(username).orElseThrow(()-> new IllegalArgumentException("There is no user with username = "+username));
-        boolean newStatus = !user.isActive();
-        user.setActive(newStatus);
-        logger.info("Transaction ID: {}, Active status was switched to {}", transactionId, newStatus);
-        return newStatus;
     }
 
     @Override

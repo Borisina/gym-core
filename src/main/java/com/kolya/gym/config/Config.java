@@ -47,11 +47,6 @@ public class Config {
     private String dialect;
 
     @Bean
-    public Logger logger(){
-        return org.slf4j.LoggerFactory.getLogger(Config.class);
-    }
-
-    @Bean
     public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
         LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
         em.setDataSource(dataSource());

@@ -16,8 +16,7 @@ import static org.mockito.Mockito.*;
 public class AuthControllerTest {
 
     private UserService userService = mock(UserService.class);;
-    private Logger logger = mock(Logger.class);
-    private AuthController authController = new AuthController(userService, logger);
+    private AuthController authController = new AuthController(userService);
 
     @Test
     public void testChangeLoginSuccess() {

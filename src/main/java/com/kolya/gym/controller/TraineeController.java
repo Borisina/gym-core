@@ -12,6 +12,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,17 +25,15 @@ import java.util.UUID;
 @RequestMapping("/trainees")
 @RestController
 public class TraineeController {
+
+    private final Logger logger = LoggerFactory.getLogger(TraineeController.class);
     private final TraineeService traineeService;
     private final UserService userService;
 
-    private final Logger logger;
-
-
     @Autowired
-    public TraineeController(TraineeService traineeService, UserService userService, Logger logger) {
+    public TraineeController(TraineeService traineeService, UserService userService) {
         this.traineeService = traineeService;
         this.userService = userService;
-        this.logger = logger;
     }
 
     @ApiOperation(value = "Create trainee", response = ResponseEntity.class)

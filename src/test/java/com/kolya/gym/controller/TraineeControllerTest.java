@@ -29,15 +29,12 @@ public class TraineeControllerTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private Logger logger;
-
     private TraineeController traineeController;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        traineeController = new TraineeController(traineeService, userService, logger);
+        traineeController = new TraineeController(traineeService, userService);
     }
 
     @Test

@@ -6,6 +6,7 @@ import com.kolya.gym.data.TrainingData;
 import com.kolya.gym.domain.*;
 import com.kolya.gym.repo.*;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,19 +17,19 @@ import java.util.UUID;
 
 @Service
 public class TrainingService {
+
+    private final Logger logger = LoggerFactory.getLogger(TrainingService.class);
     private final TrainingRepo trainingRepo;
     private final TrainerRepo trainerRepo;
     private final TraineeRepo traineeRepo;
     private final TrainingTypeRepo trainingTypeRepo;
-    private final Logger logger;
 
     @Autowired
-    public TrainingService(TrainingRepo trainingRepo, TrainerRepo trainerRepo, TraineeRepo traineeRepo, TrainingTypeRepo trainingTypeRepo, Logger logger) {
+    public TrainingService(TrainingRepo trainingRepo, TrainerRepo trainerRepo, TraineeRepo traineeRepo, TrainingTypeRepo trainingTypeRepo) {
         this.trainingRepo = trainingRepo;
         this.trainerRepo = trainerRepo;
         this.traineeRepo = traineeRepo;
         this.trainingTypeRepo = trainingTypeRepo;
-        this.logger = logger;
     }
 
     public Training create(UUID transactionId, TrainingData trainingData){

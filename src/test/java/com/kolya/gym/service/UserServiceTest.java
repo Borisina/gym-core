@@ -30,15 +30,12 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
-    @Mock
-    private Logger logger;
-
     private UserService userService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.userService = new UserService(userRepo, passwordEncoder, logger);
+        this.userService = new UserService(userRepo, passwordEncoder);
     }
 
     @Test
@@ -101,19 +98,6 @@ public class UserServiceTest {
         when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
 
         userService.changePassword(UUID.randomUUID(), changePasswordData);
-    }
-
-    @Test
-    public void testChangeActiveStatusSuccess() {
-        when(userRepo.findByUsername(anyString())).thenReturn(Optional.of(new User()));
-        boolean status = userService.changeActiveStatus(UUID.randomUUID(), "username");
-        assertNotNull(status);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testChangeActiveStatusFailure() {
-        when(userRepo.findByUsername(anyString())).thenThrow(IllegalArgumentException.class);
-        userService.changeActiveStatus(UUID.randomUUID(), "username");
     }
 
     @Test(expected = IllegalArgumentException.class)

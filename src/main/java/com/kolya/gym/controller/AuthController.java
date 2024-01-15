@@ -1,5 +1,6 @@
 package com.kolya.gym.controller;
 
+import com.kolya.gym.config.Config;
 import com.kolya.gym.data.ChangePasswordData;
 import com.kolya.gym.service.UserService;
 import io.swagger.annotations.Api;
@@ -7,6 +8,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +22,12 @@ import java.util.UUID;
 @RestController
 public class AuthController {
 
-    private final  UserService userService;
-    private final Logger logger;
+    private final Logger logger = LoggerFactory.getLogger(AuthController.class);
+    private final UserService userService;
 
     @Autowired
-    public AuthController(UserService userService, Logger logger) {
+    public AuthController(UserService userService) {
         this.userService = userService;
-        this.logger = logger;
-    }
-
-    @GetMapping
-    public String hello(){
-        return "hello";
     }
 
     @ApiOperation(value = "Change user's login", response = ResponseEntity.class)

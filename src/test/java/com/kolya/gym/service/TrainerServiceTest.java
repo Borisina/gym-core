@@ -29,15 +29,12 @@ public class TrainerServiceTest {
     @Mock
     private UserService userService;
 
-    @Mock
-    private Logger logger;
-
     private TrainerService trainerService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.trainerService = new TrainerService(trainerRepo, userService, logger);
+        this.trainerService = new TrainerService(trainerRepo, userService);
     }
 
     @Test
