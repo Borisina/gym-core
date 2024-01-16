@@ -1,0 +1,66 @@
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+server:
+  port: 8080
+
+---
+
+spring:
+  profiles: test
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym_test
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+server:
+  port: 8000
+
+---
+
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:postgresql://localhost:5432/gym_prod
+    username: postgres
+    password: root
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: none
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+server:
+  port: 8082
