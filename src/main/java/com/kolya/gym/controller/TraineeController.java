@@ -1,6 +1,5 @@
 package com.kolya.gym.controller;
 
-import com.kolya.gym.actuator.PrometheusMetrics;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TraineeData;
 import com.kolya.gym.data.TraineeDataUpdate;
@@ -8,8 +7,6 @@ import com.kolya.gym.domain.Trainee;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.service.TraineeService;
 import com.kolya.gym.service.UserService;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -24,8 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-import static com.kolya.gym.actuator.PrometheusMetrics.CreateTraineeCounter;
-
 @Api(value = "API for trainees", tags = "Trainees")
 @RequestMapping("/trainees")
 @RestController
@@ -34,13 +29,11 @@ public class TraineeController {
     private final Logger logger = LoggerFactory.getLogger(TraineeController.class);
     private final TraineeService traineeService;
     private final UserService userService;
-    private final Counter counter;
 
     @Autowired
-    public TraineeController(TraineeService traineeService,  UserService userService, MeterRegistry meterRegistry) {
+    public TraineeController(TraineeService traineeService, UserService userService) {
         this.traineeService = traineeService;
         this.userService = userService;
-        counter = CreateTraineeCounter(meterRegistry);
     }
 
     @ApiOperation(value = "Create trainee", response = ResponseEntity.class)
@@ -52,7 +45,6 @@ public class TraineeController {
     public ResponseEntity<?> createTrainee(@RequestBody TraineeData traineeData){
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, POST /trainees was called with body {}",transactionId,  traineeData);
-        counter.increment();
         try{
             traineeData.validate();
         }catch (IllegalArgumentException e){

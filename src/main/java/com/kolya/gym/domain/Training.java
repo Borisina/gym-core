@@ -1,7 +1,6 @@
 package com.kolya.gym.domain;
 
 import com.fasterxml.jackson.annotation.*;
-import com.kolya.gym.converter.TrainingTypeConverter;
 import javax.persistence.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
@@ -27,11 +26,13 @@ public class Training{
     private Trainee trainee;
     private String trainingName;
 
-    //@ManyToOne
-    //@JoinColumn(name = "training_type_id")
-    @Convert(converter = TrainingTypeConverter.class)
+    //@ElementCollection(targetClass = TrainingType.class, fetch = FetchType.EAGER)
+    //@CollectionTable(name = "training_type", joinColumns = @JoinColumn(name = "training_id"))
+    @ManyToOne
+    @JoinColumn(name = "training_type_id")
     private TrainingType trainingType;
 
+    //@Temporal(TemporalType.DATE)
     @JsonFormat(pattern="yyyy-MM-dd")
     private Date trainingDate;
     private int duration;

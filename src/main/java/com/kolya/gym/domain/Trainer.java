@@ -3,7 +3,6 @@ package com.kolya.gym.domain;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
-import com.kolya.gym.converter.TrainingTypeConverter;
 import javax.persistence.*;
 
 import java.util.List;
@@ -15,10 +14,8 @@ public class Trainer{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    //@ManyToOne
-    //@JoinColumn(name = "training_type_id")
-    @Column(name = "training_type_id")
-    @Convert(converter = TrainingTypeConverter.class)
+    @ManyToOne
+    @JoinColumn(name = "training_type_id")
     private TrainingType specialization;
 
 
