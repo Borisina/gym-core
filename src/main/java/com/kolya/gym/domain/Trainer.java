@@ -15,8 +15,6 @@ public class Trainer{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    //@ManyToOne
-    //@JoinColumn(name = "training_type_id")
     @Column(name = "training_type_id")
     @Convert(converter = TrainingTypeConverter.class)
     private TrainingType specialization;

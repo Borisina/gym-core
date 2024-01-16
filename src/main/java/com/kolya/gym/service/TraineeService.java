@@ -22,7 +22,6 @@ import java.util.UUID;
 
 @Service
 public class TraineeService {
-
     private final Logger logger = LoggerFactory.getLogger(TraineeService.class);
     private final TraineeRepo traineeRepo;
     private final TrainerRepo trainerRepo;

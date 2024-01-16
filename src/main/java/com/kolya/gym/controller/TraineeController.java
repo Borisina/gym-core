@@ -8,8 +8,6 @@ import com.kolya.gym.domain.Trainee;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.service.TraineeService;
 import com.kolya.gym.service.UserService;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -24,8 +22,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-import static com.kolya.gym.actuator.PrometheusMetrics.CreateTraineeCounter;
-
 @Api(value = "API for trainees", tags = "Trainees")
 @RequestMapping("/trainees")
 @RestController
@@ -34,13 +30,13 @@ public class TraineeController {
     private final Logger logger = LoggerFactory.getLogger(TraineeController.class);
     private final TraineeService traineeService;
     private final UserService userService;
-    private final Counter counter;
+    private final PrometheusMetrics prometheusMetrics;
 
     @Autowired
-    public TraineeController(TraineeService traineeService,  UserService userService, MeterRegistry meterRegistry) {
+    public TraineeController(TraineeService traineeService,  UserService userService, PrometheusMetrics prometheusMetrics) {
         this.traineeService = traineeService;
         this.userService = userService;
-        counter = CreateTraineeCounter(meterRegistry);
+        this.prometheusMetrics = prometheusMetrics;
     }
 
     @ApiOperation(value = "Create trainee", response = ResponseEntity.class)
@@ -52,7 +48,7 @@ public class TraineeController {
     public ResponseEntity<?> createTrainee(@RequestBody TraineeData traineeData){
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, POST /trainees was called with body {}",transactionId,  traineeData);
-        counter.increment();
+        prometheusMetrics.incrementCreateTraineeCounter();
         try{
             traineeData.validate();
         }catch (IllegalArgumentException e){

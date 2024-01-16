@@ -1,12 +1,11 @@
 package com.kolya.gym.controller;
 
+import com.kolya.gym.actuator.PrometheusMetrics;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.service.TrainerService;
 import com.kolya.gym.service.UserService;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -22,7 +21,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.kolya.gym.actuator.PrometheusMetrics.CreateTrainerCounter;
 
 @Api(value = "API for trainers", tags = "Trainers")
 @RestController
@@ -32,13 +30,13 @@ public class TrainerController {
     private final Logger logger = LoggerFactory.getLogger(TrainerController.class);
     private final TrainerService trainerService;
     private final UserService userService;
-    private final Counter counter;
+    private final PrometheusMetrics prometheusMetrics;
 
     @Autowired
-    public TrainerController(TrainerService trainerService, UserService userService, MeterRegistry meterRegistry) {
+    public TrainerController(TrainerService trainerService, UserService userService, PrometheusMetrics prometheusMetrics) {
         this.trainerService = trainerService;
         this.userService = userService;
-        counter = CreateTrainerCounter(meterRegistry);
+        this.prometheusMetrics = prometheusMetrics;
     }
 
     @ApiOperation(value = "Create trainer", response = ResponseEntity.class)
@@ -50,7 +48,7 @@ public class TrainerController {
     public ResponseEntity<?> createTrainer(@RequestBody TrainerData trainerData){
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, POST /trainers was called with body {}", transactionId, trainerData);
-        counter.increment();
+        prometheusMetrics.incrementCreateTrainerCounter();
         try{
             trainerData.validate();
         }catch (IllegalArgumentException e){

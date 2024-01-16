@@ -1,6 +1,6 @@
 package com.kolya.gym.controller;
 
-import com.kolya.gym.builder.TraineeDataBuilder;
+import com.kolya.gym.actuator.PrometheusMetrics;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TraineeData;
 import com.kolya.gym.data.TraineeDataUpdate;
@@ -12,7 +12,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -31,14 +30,14 @@ public class TraineeControllerTest {
     private UserService userService;
 
     @Mock
-    private MeterRegistry registry;
+    private  PrometheusMetrics prometheusMetrics;
 
     private TraineeController traineeController;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        traineeController = new TraineeController(traineeService, userService, registry);
+        traineeController = new TraineeController(traineeService, userService, prometheusMetrics);
     }
 
     @Test

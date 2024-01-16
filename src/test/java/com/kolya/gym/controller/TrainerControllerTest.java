@@ -1,5 +1,6 @@
 package com.kolya.gym.controller;
 
+import com.kolya.gym.actuator.PrometheusMetrics;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
@@ -33,7 +34,7 @@ public class TrainerControllerTest {
     private UserService userService;
 
     @Mock
-    private MeterRegistry registry;
+    private PrometheusMetrics prometheusMetrics;
 
 
     private TrainerController trainerController;
@@ -41,7 +42,7 @@ public class TrainerControllerTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.trainerController = new TrainerController(trainerService, userService, registry);
+        this.trainerController = new TrainerController(trainerService, userService, prometheusMetrics);
     }
 
     @Test

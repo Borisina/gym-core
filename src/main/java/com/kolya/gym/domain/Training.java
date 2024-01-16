@@ -27,8 +27,6 @@ public class Training{
     private Trainee trainee;
     private String trainingName;
 
-    //@ManyToOne
-    //@JoinColumn(name = "training_type_id")
     @Convert(converter = TrainingTypeConverter.class)
     private TrainingType trainingType;
 

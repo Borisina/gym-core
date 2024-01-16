@@ -34,15 +34,12 @@ public class TrainingServiceTest {
     @Mock
     private TraineeRepo traineeRepo;
 
-    @Mock
-    private TrainingTypeRepo trainingTypeRepo;
-
     private TrainingService trainingService;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.trainingService = new TrainingService(trainingRepo, trainerRepo, traineeRepo, trainingTypeRepo);
+        this.trainingService = new TrainingService(trainingRepo, trainerRepo, traineeRepo);
     }
 
     @Test
