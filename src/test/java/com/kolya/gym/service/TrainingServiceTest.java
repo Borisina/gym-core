@@ -8,12 +8,10 @@ import com.kolya.gym.domain.Training;
 import com.kolya.gym.repo.TraineeRepo;
 import com.kolya.gym.repo.TrainerRepo;
 import com.kolya.gym.repo.TrainingRepo;
-import com.kolya.gym.repo.TrainingTypeRepo;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;

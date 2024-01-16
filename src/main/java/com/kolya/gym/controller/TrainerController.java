@@ -5,6 +5,8 @@ import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.service.TrainerService;
 import com.kolya.gym.service.UserService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.kolya.gym.actuator.PrometheusMetrics.CreateTrainerCounter;
+
 @Api(value = "API for trainers", tags = "Trainers")
 @RestController
 @RequestMapping("/trainers")
@@ -28,11 +32,13 @@ public class TrainerController {
     private final Logger logger = LoggerFactory.getLogger(TrainerController.class);
     private final TrainerService trainerService;
     private final UserService userService;
+    private final Counter counter;
 
     @Autowired
-    public TrainerController(TrainerService trainerService, UserService userService) {
+    public TrainerController(TrainerService trainerService, UserService userService, MeterRegistry meterRegistry) {
         this.trainerService = trainerService;
         this.userService = userService;
+        counter = CreateTrainerCounter(meterRegistry);
     }
 
     @ApiOperation(value = "Create trainer", response = ResponseEntity.class)
@@ -44,6 +50,7 @@ public class TrainerController {
     public ResponseEntity<?> createTrainer(@RequestBody TrainerData trainerData){
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, POST /trainers was called with body {}", transactionId, trainerData);
+        counter.increment();
         try{
             trainerData.validate();
         }catch (IllegalArgumentException e){

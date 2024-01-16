@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,14 +23,12 @@ public class TrainingService {
     private final TrainingRepo trainingRepo;
     private final TrainerRepo trainerRepo;
     private final TraineeRepo traineeRepo;
-    private final TrainingTypeRepo trainingTypeRepo;
 
     @Autowired
-    public TrainingService(TrainingRepo trainingRepo, TrainerRepo trainerRepo, TraineeRepo traineeRepo, TrainingTypeRepo trainingTypeRepo) {
+    public TrainingService(TrainingRepo trainingRepo, TrainerRepo trainerRepo, TraineeRepo traineeRepo) {
         this.trainingRepo = trainingRepo;
         this.trainerRepo = trainerRepo;
         this.traineeRepo = traineeRepo;
-        this.trainingTypeRepo = trainingTypeRepo;
     }
 
     public Training create(UUID transactionId, TrainingData trainingData){
@@ -126,7 +125,7 @@ public class TrainingService {
 
     public List<TrainingType> getTrainingTypes(UUID transactionId) {
         logger.info("Transaction ID: {}, Getting ", transactionId);
-        List<TrainingType> types = trainingTypeRepo.findAll();
+        List<TrainingType> types = Arrays.asList(TrainingType.values());
         logger.info("Transaction ID: {}, Training Types were returned {}", transactionId,types);
         return types;
     }

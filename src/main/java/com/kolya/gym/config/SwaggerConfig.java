@@ -1,12 +1,7 @@
 package com.kolya.gym.config;
 
-import com.fasterxml.classmate.TypeResolver;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.core.Authentication;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.AuthorizationScope;
@@ -16,10 +11,10 @@ import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.*;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.Arrays;
-import java.util.List;
 
 @Configuration
 @EnableSwagger2
@@ -33,6 +28,15 @@ public class SwaggerConfig {
                 .build()
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(httpBasicScheme()));
+    }
+
+    @Bean
+    UiConfiguration uiConfig() {
+        return UiConfigurationBuilder.builder()
+                .docExpansion(DocExpansion.NONE)
+                .operationsSorter(OperationsSorter.ALPHA)
+                .defaultModelRendering(ModelRendering.MODEL)
+                .build();
     }
 
     private SecurityContext securityContext() {
@@ -50,12 +54,3 @@ public class SwaggerConfig {
         return new BasicAuth("basicAuth");
     }
 }
-
-
-
-
-
-
-
-
-

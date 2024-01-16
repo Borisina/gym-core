@@ -7,6 +7,7 @@ import com.kolya.gym.data.TraineeDataUpdate;
 import com.kolya.gym.domain.Trainee;
 import com.kolya.gym.service.TraineeService;
 import com.kolya.gym.service.UserService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -29,12 +30,15 @@ public class TraineeControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private MeterRegistry registry;
+
     private TraineeController traineeController;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        traineeController = new TraineeController(traineeService, userService);
+        traineeController = new TraineeController(traineeService, userService, registry);
     }
 
     @Test
