@@ -1,5 +1,6 @@
 package com.kolya.gym.controller;
 
+import com.kolya.gym.actuator.PrometheusMetrics;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+
 @Api(value = "API for trainers", tags = "Trainers")
 @RestController
 @RequestMapping("/trainers")
@@ -28,11 +30,13 @@ public class TrainerController {
     private final Logger logger = LoggerFactory.getLogger(TrainerController.class);
     private final TrainerService trainerService;
     private final UserService userService;
+    private final PrometheusMetrics prometheusMetrics;
 
     @Autowired
-    public TrainerController(TrainerService trainerService, UserService userService) {
+    public TrainerController(TrainerService trainerService, UserService userService, PrometheusMetrics prometheusMetrics) {
         this.trainerService = trainerService;
         this.userService = userService;
+        this.prometheusMetrics = prometheusMetrics;
     }
 
     @ApiOperation(value = "Create trainer", response = ResponseEntity.class)
@@ -44,6 +48,7 @@ public class TrainerController {
     public ResponseEntity<?> createTrainer(@RequestBody TrainerData trainerData){
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {}, POST /trainers was called with body {}", transactionId, trainerData);
+        prometheusMetrics.incrementCreateTrainerCounter();
         try{
             trainerData.validate();
         }catch (IllegalArgumentException e){

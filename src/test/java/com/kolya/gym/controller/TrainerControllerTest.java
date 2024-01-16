@@ -1,10 +1,12 @@
 package com.kolya.gym.controller;
 
+import com.kolya.gym.actuator.PrometheusMetrics;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.service.TrainerService;
 import com.kolya.gym.service.UserService;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -31,13 +33,16 @@ public class TrainerControllerTest {
     @Mock
     private UserService userService;
 
+    @Mock
+    private PrometheusMetrics prometheusMetrics;
+
 
     private TrainerController trainerController;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        this.trainerController = new TrainerController(trainerService, userService);
+        this.trainerController = new TrainerController(trainerService, userService, prometheusMetrics);
     }
 
     @Test

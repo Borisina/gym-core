@@ -1,6 +1,5 @@
 package com.kolya.gym.controller;
 
-import com.kolya.gym.config.Config;
 import com.kolya.gym.data.ChangePasswordData;
 import com.kolya.gym.service.UserService;
 import io.swagger.annotations.Api;

@@ -1,7 +1,6 @@
 package com.kolya.gym.builder;
 
 import com.kolya.gym.data.TraineeData;
-import com.kolya.gym.data.TrainerData;
 
 import java.util.Date;
 
