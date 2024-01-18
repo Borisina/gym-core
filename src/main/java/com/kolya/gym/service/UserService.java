@@ -97,11 +97,9 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(()->new UsernameNotFoundException("Where is no user with username = "+username));
     }
 
-    public UserDetails authorize(AuthData authData) throws IllegalArgumentException{
+    public UserDetails authorize(AuthData authData) throws IllegalArgumentException, ExcessiveAttemptsException{
         UserDetails userDetails = loadUserByUsername(authData.getUsername());
-        if (loginAttemptService.isBlocked(userDetails.getUsername())) {
-            throw new ExcessiveAttemptsException("You are blocked for 5 minutes due to many failed login attempts");
-        }
+        loginAttemptService.isUserBLocked(userDetails.getUsername());
         if (!passwordEncoder.matches(authData.getPassword(),userDetails.getPassword())){
             loginAttemptService.loginFailed(userDetails.getUsername());
             throw new IllegalArgumentException("Wrong password.");
