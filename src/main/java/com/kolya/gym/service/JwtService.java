@@ -1,5 +1,6 @@
 package com.kolya.gym.service;
 
+import com.kolya.gym.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -64,8 +65,10 @@ public class JwtService {
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 
-    public Boolean validateToken(String token, UserDetails userDetails) throws SignatureException {
-        final String username = extractUsername(token);
-        return (username.equals(userDetailsService.loadUserByUsername(username).getUsername()) && !isTokenExpired(token));
+    public void validateToken(String token) throws SignatureException, InvalidTokenException {
+        String username = extractUsername(token);
+        if (!username.equals(userDetailsService.loadUserByUsername(username).getUsername()) && isTokenExpired(token)) {
+            throw new InvalidTokenException("Token is not valid");
+        }
     }
 }

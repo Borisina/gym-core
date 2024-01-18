@@ -1,12 +1,14 @@
 package com.kolya.gym.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kolya.gym.exception.InvalidTokenException;
 import com.kolya.gym.service.JwtService;
 import io.jsonwebtoken.MalformedJwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -36,53 +38,52 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        Cookie[] cookies = request.getCookies();
+        String username = null;
         String jwt = null;
-        String userName = null;
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("jwt")) {
-                    jwt = cookie.getValue();
-                    try{
-                        userName = jwtService.extractUsername(jwt);
-                    }catch (MalformedJwtException | SignatureException e){
-                        sendError(response,HttpServletResponse.SC_FORBIDDEN, "Jwt is not correct");
-                        return;
-                    }
-                    break;
-                }
+        Cookie[] cookies = request.getCookies();
+        try{
+            if (cookies != null){
+                jwt = getJwtFromCookie(cookies);
             }
-        }
-
-        if (userName != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
-            try {
-                if (jwtService.validateToken(jwt, userDetails)) {
-                    UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                            = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                    usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
-                }else {
-                    sendError(response,HttpServletResponse.SC_FORBIDDEN, "Jwt is not valid");
-                    return;
-                }
-            } catch (SignatureException e) {
-                sendError(response,HttpServletResponse.SC_FORBIDDEN, "Jwt is not correct");
-                return;
+            if (jwt!=null){
+                username = jwtService.extractUsername(jwt);
             }
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                jwtService.validateToken(jwt);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                setAuthenticationForContext(userDetails, request);
+            }
+        } catch (InvalidTokenException | UsernameNotFoundException e) {
+            sendError(response,HttpServletResponse.SC_FORBIDDEN, "Jwt is not valid");
+            return;
+        } catch (MalformedJwtException | SignatureException e) {
+            sendError(response,HttpServletResponse.SC_FORBIDDEN, "Jwt is not correct");
+            return;
         }
 
         filterChain.doFilter(request, response);
-
     }
 
     private void sendError(HttpServletResponse response, int status, String message) throws IOException {
         response.setStatus(status);
         response.setContentType("application/json");
-
-        // Convert the error message into JSON
         String json = new ObjectMapper().writeValueAsString(Collections.singletonMap("error", message));
-
         response.getWriter().write(json);
+    }
+
+    private String getJwtFromCookie(Cookie[] cookies){
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("jwt")) {
+                return cookie.getValue();
+            }
+        }
+        return null;
+    }
+
+    private void setAuthenticationForContext(UserDetails userDetails, HttpServletRequest request){
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
+                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+        SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }
 }

@@ -31,7 +31,8 @@ public class BearerTokenFilter extends GenericFilterBean {
             return;
         }
 
-        String token = authorizationHeader.substring(7);
+        int TOKEN_BEGIN_INDEX = 7;
+        String token = authorizationHeader.substring(TOKEN_BEGIN_INDEX);
 
         if (!token.equals(bearerToken)) {
            sendError(httpResponse, HttpServletResponse.SC_FORBIDDEN, "Invalid Bearer token");
