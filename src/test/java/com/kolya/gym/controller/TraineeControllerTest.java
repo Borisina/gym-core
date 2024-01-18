@@ -7,11 +7,11 @@ import com.kolya.gym.data.TraineeDataUpdate;
 import com.kolya.gym.domain.Trainee;
 import com.kolya.gym.service.TraineeService;
 import com.kolya.gym.service.UserService;
-import io.micrometer.core.instrument.MeterRegistry;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
@@ -21,6 +21,7 @@ import static com.kolya.gym.prepareddata.PreparedData.traineeDataList;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TraineeControllerTest {
 
     @Mock
@@ -32,13 +33,8 @@ public class TraineeControllerTest {
     @Mock
     private  PrometheusMetrics prometheusMetrics;
 
+    @InjectMocks
     private TraineeController traineeController;
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        traineeController = new TraineeController(traineeService, userService, prometheusMetrics);
-    }
 
     @Test
     public void testCreateTrainee() {
@@ -109,8 +105,6 @@ public class TraineeControllerTest {
     @Test
     public void testCreateTraineeFailure() {
         TraineeData traineeData = new TraineeData();
-        when(traineeService.create(any(UUID.class), any(TraineeData.class)))
-                .thenThrow(IllegalArgumentException.class);
 
         ResponseEntity<?> response = traineeController.createTrainee(traineeData);
 
@@ -130,8 +124,6 @@ public class TraineeControllerTest {
     @Test
     public void testUpdateTraineeFailure() {
         TraineeDataUpdate update = new TraineeDataUpdate();
-        when(traineeService.update(any(UUID.class), any(TraineeDataUpdate.class)))
-                .thenThrow(IllegalArgumentException.class);
 
         ResponseEntity<?> responseEntity = traineeController.updateTrainee(update, "username");
 

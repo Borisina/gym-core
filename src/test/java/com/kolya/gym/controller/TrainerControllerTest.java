@@ -9,8 +9,11 @@ import com.kolya.gym.service.UserService;
 import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TrainerControllerTest {
 
     @Mock
@@ -36,14 +40,8 @@ public class TrainerControllerTest {
     @Mock
     private PrometheusMetrics prometheusMetrics;
 
-
+    @InjectMocks
     private TrainerController trainerController;
-
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        this.trainerController = new TrainerController(trainerService, userService, prometheusMetrics);
-    }
 
     @Test
     public void testCreateTrainerSuccess() {
@@ -97,7 +95,6 @@ public class TrainerControllerTest {
     @Test
     public void testCreateTrainerFailure() {
         TrainerData trainerData = new TrainerData();
-        when(trainerService.create(any(UUID.class), any(TrainerData.class))).thenThrow(IllegalArgumentException.class);
 
         ResponseEntity<?> response = trainerController.createTrainer(trainerData);
 
@@ -116,7 +113,6 @@ public class TrainerControllerTest {
     @Test
     public void testUpdateTrainerFailure() {
         TrainerData trainerData = new TrainerData();
-        when(trainerService.update(any(UUID.class), any(TrainerData.class), anyString())).thenThrow(IllegalArgumentException.class);
 
         ResponseEntity<?> response = trainerController.updateTrainer(trainerData, "username");
 

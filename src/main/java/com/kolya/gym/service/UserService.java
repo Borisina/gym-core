@@ -1,14 +1,18 @@
 package com.kolya.gym.service;
 
+import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.ChangePasswordData;
 import com.kolya.gym.data.UserData;
 import com.kolya.gym.domain.User;
+import com.kolya.gym.exception.ExcessiveAttemptsException;
 import com.kolya.gym.repo.UserRepo;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,14 +25,13 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final Logger logger = LoggerFactory.getLogger(UserService.class);
-    private final UserRepo userRepo;
-    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
-        this.userRepo = userRepo;
-        this.passwordEncoder = passwordEncoder;
-    }
+    private UserRepo userRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private LoginAttemptService loginAttemptService;
 
     private User generateUser(UserData userData){
         User user = new User();
@@ -92,6 +95,18 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepo.findByUsername(username)
                 .orElseThrow(()->new UsernameNotFoundException("Where is no user with username = "+username));
+    }
+
+    public UserDetails authorize(AuthData authData) throws IllegalArgumentException{
+        UserDetails userDetails = loadUserByUsername(authData.getUsername());
+        if (loginAttemptService.isBlocked(userDetails.getUsername())) {
+            throw new ExcessiveAttemptsException("You are blocked for 5 minutes due to many failed login attempts");
+        }
+        if (!passwordEncoder.matches(authData.getPassword(),userDetails.getPassword())){
+            loginAttemptService.loginFailed(userDetails.getUsername());
+            throw new IllegalArgumentException("Wrong password.");
+        }
+        return userDetails;
     }
 
     public String encodePassword(String password){

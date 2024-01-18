@@ -10,8 +10,11 @@ import com.kolya.gym.repo.TrainerRepo;
 import com.kolya.gym.repo.TrainingRepo;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +27,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TrainingServiceTest {
     @Mock
     private TrainingRepo trainingRepo;
@@ -33,14 +37,10 @@ public class TrainingServiceTest {
 
     @Mock
     private TraineeRepo traineeRepo;
-
+    @InjectMocks
     private TrainingService trainingService;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        this.trainingService = new TrainingService(trainingRepo, trainerRepo, traineeRepo);
-    }
+
 
     @Test
     public void testCreateTrainingSuccess() {

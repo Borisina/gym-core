@@ -28,16 +28,13 @@ import java.util.UUID;
 public class TrainerController {
 
     private final Logger logger = LoggerFactory.getLogger(TrainerController.class);
-    private final TrainerService trainerService;
-    private final UserService userService;
-    private final PrometheusMetrics prometheusMetrics;
 
     @Autowired
-    public TrainerController(TrainerService trainerService, UserService userService, PrometheusMetrics prometheusMetrics) {
-        this.trainerService = trainerService;
-        this.userService = userService;
-        this.prometheusMetrics = prometheusMetrics;
-    }
+    private TrainerService trainerService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private PrometheusMetrics prometheusMetrics;
 
     @ApiOperation(value = "Create trainer", response = ResponseEntity.class)
     @ApiResponses(value = {

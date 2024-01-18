@@ -23,16 +23,14 @@ import java.util.UUID;
 @Service
 public class TraineeService {
     private final Logger logger = LoggerFactory.getLogger(TraineeService.class);
-    private final TraineeRepo traineeRepo;
-    private final TrainerRepo trainerRepo;
-    private final UserService userService;
 
     @Autowired
-    public TraineeService(TraineeRepo traineeRepo, TrainerRepo trainerRepo, UserService userService) {
-        this.traineeRepo = traineeRepo;
-        this.trainerRepo = trainerRepo;
-        this.userService = userService;
-    }
+    private TraineeRepo traineeRepo;
+    @Autowired
+    private TrainerRepo trainerRepo;
+    @Autowired
+    private UserService userService;
+
 
     @Transactional
     public AuthData create(UUID transactionId, TraineeData traineeData){
@@ -125,8 +123,4 @@ public class TraineeService {
         trainee.setUser(user);
         return trainee;
     }
-
-
-
-
 }

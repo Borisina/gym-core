@@ -8,8 +8,11 @@ import com.kolya.gym.domain.User;
 import com.kolya.gym.repo.TrainerRepo;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 
 import java.util.List;
@@ -22,20 +25,16 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TrainerServiceTest {
     @Mock
     private TrainerRepo trainerRepo;
 
     @Mock
     private UserService userService;
-
+    @InjectMocks
     private TrainerService trainerService;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        this.trainerService = new TrainerService(trainerRepo, userService);
-    }
 
     @Test
     public void testCreateTrainerSuccess() {
@@ -58,7 +57,6 @@ public class TrainerServiceTest {
     public void testUpdateTrainerSuccess() {
         TrainerData trainerData = trainerDataList.get(0);
         trainerData.setActive(true);
-        when(trainerRepo.save(any(Trainer.class))).thenReturn(new Trainer());
         when(trainerRepo.findByUserUsername("username")).thenReturn(Optional.of(new Trainer()));
         Trainer trainer = trainerService.update(UUID.randomUUID(), trainerData, "username");
         assertNotNull(trainer);
@@ -73,7 +71,6 @@ public class TrainerServiceTest {
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateTrainerFailure() {
         TrainerData trainerData = new TrainerData();
-        when(trainerRepo.save(any(Trainer.class))).thenThrow(IllegalArgumentException.class);
         trainerService.update(UUID.randomUUID(), trainerData, "username");
     }
 
@@ -95,14 +92,8 @@ public class TrainerServiceTest {
 
     @Test
     public void testGetNotAssignedOnTraineeSuccess() {
-        when(trainerRepo.findByUserUsername(anyString())).thenReturn(Optional.of(new Trainer()));
         List<Trainer> trainerList = trainerService.getNotAssignedOnTrainee(UUID.randomUUID(), "username");
         assertNotNull(trainerList);
     }
 
-    /*@Test(expected = IllegalArgumentException.class)
-    public void testGetNotAssignedOnTraineeFailure() {
-        when(trainerRepo.findByUserUsername(anyString())).thenThrow(IllegalArgumentException.class);
-        trainerService.getNotAssignedOnTrainee(UUID.randomUUID(), "username");
-    }*/
 }

@@ -1,6 +1,5 @@
 package com.kolya.gym.service;
 
-import com.kolya.gym.controller.TrainingController;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
@@ -20,14 +19,11 @@ import java.util.UUID;
 public class TrainerService {
 
     private final Logger logger = LoggerFactory.getLogger(TrainerService.class);
-    private final TrainerRepo trainerRepo;
-    private final UserService userService;
 
     @Autowired
-    public TrainerService(TrainerRepo trainerRepo, UserService userService) {
-        this.trainerRepo = trainerRepo;
-        this.userService = userService;
-    }
+    private TrainerRepo trainerRepo;
+    @Autowired
+    private UserService userService;
 
     @Transactional
     public AuthData create(UUID transactionId, TrainerData trainerData){

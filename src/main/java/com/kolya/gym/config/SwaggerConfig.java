@@ -4,10 +4,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.service.AuthorizationScope;
-import springfox.documentation.service.BasicAuth;
-import springfox.documentation.service.SecurityReference;
-import springfox.documentation.service.SecurityScheme;
+import springfox.documentation.service.*;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
@@ -26,8 +23,8 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.any())
                 .paths(PathSelectors.any())
                 .build()
-                .securityContexts(Arrays.asList(securityContext()))
-                .securitySchemes(Arrays.asList(httpBasicScheme()));
+                .securityContexts(Arrays.asList(bearerSecurityContextTrainees(), bearerSecurityContextTrainers(), cookieSecurityContext()))
+                .securitySchemes(Arrays.asList(cookieAuthScheme(), bearerAuthScheme()));
     }
 
     @Bean
@@ -39,18 +36,35 @@ public class SwaggerConfig {
                 .build();
     }
 
-    private SecurityContext securityContext() {
+    private SecurityContext cookieSecurityContext() {
         return SecurityContext.builder()
-                .securityReferences(Arrays.asList(basicAuthReference()))
-                .forPaths(PathSelectors.any())
+                .securityReferences(Arrays.asList(new SecurityReference("cookieAuth", new AuthorizationScope[0])))
                 .build();
     }
 
-    private SecurityReference basicAuthReference() {
-        return new SecurityReference("basicAuth", new AuthorizationScope[0]);
+    private SecurityScheme cookieAuthScheme() {
+        return new ApiKey("cookieAuth", "Cookie", "header");
     }
 
-    private SecurityScheme httpBasicScheme() {
-        return new BasicAuth("basicAuth");
+    private SecurityContext bearerSecurityContextTrainees() {
+        return SecurityContext.builder()
+                .securityReferences(Arrays.asList(bearerAuthReference()))
+                .forPaths(PathSelectors.ant("/trainees"))  // for endpoints using JWT
+                .build();
+    }
+
+    private SecurityContext bearerSecurityContextTrainers() {
+        return SecurityContext.builder()
+                .securityReferences(Arrays.asList(bearerAuthReference()))
+                .forPaths(PathSelectors.ant("/trainers"))  // for endpoints using JWT
+                .build();
+    }
+
+    private SecurityReference bearerAuthReference() {
+        return new SecurityReference("bearerAuth", new AuthorizationScope[0]);
+    }
+
+    private SecurityScheme bearerAuthScheme() {
+        return new ApiKey("bearerAuth", "Authorization", "header");
     }
 }

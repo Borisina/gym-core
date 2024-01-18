@@ -28,16 +28,13 @@ import java.util.UUID;
 public class TrainingController {
 
     private final Logger logger = LoggerFactory.getLogger(TrainingController.class);
-    private final TrainingService trainingService;
-    private final TrainerService trainerService;
-    private final TraineeService traineeService;
 
     @Autowired
-    public TrainingController(TrainingService trainingService, TrainerService trainerService, TraineeService traineeService) {
-        this.trainingService = trainingService;
-        this.trainerService = trainerService;
-        this.traineeService = traineeService;
-    }
+    private TrainingService trainingService;
+    @Autowired
+    private TrainerService trainerService;
+    @Autowired
+    private TraineeService traineeService;
 
 
     @ApiOperation(value = "Create training", response = ResponseEntity.class)
