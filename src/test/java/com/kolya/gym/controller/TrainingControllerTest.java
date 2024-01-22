@@ -6,11 +6,11 @@ import com.kolya.gym.domain.Training;
 import com.kolya.gym.service.TraineeService;
 import com.kolya.gym.service.TrainerService;
 import com.kolya.gym.service.TrainingService;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -23,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
-
+@RunWith(MockitoJUnitRunner.class)
 public class TrainingControllerTest{
     @Mock
     private TrainingService trainingService;
@@ -34,13 +34,9 @@ public class TrainingControllerTest{
     @Mock
     private TraineeService traineeService;
 
+    @InjectMocks
     private TrainingController trainingController;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        this.trainingController = new TrainingController(trainingService, trainerService, traineeService);
-    }
 
     @Test
     public void testCreateTrainingSuccess() {

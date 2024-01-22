@@ -6,8 +6,11 @@ import com.kolya.gym.domain.User;
 import com.kolya.gym.repo.UserRepo;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,25 +26,20 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class UserServiceTest {
     @Mock
     private UserRepo userRepo;
 
     @Mock
     private PasswordEncoder passwordEncoder;
-
+    @InjectMocks
     private UserService userService;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        this.userService = new UserService(userRepo, passwordEncoder);
-    }
 
     @Test
     public void testGenerateUserForCreateSuccess() {
         UserData userData = new UserData();
-        when(userRepo.countDuplicates(anyString(), anyString())).thenReturn(0L);
         User user = userService.generateUserForCreate(UUID.randomUUID(), userData);
         assertNotNull(user);
     }
@@ -95,8 +93,6 @@ public class UserServiceTest {
         changePasswordData.setUsername("username");
 
         when(userRepo.findByUsername(anyString())).thenReturn(Optional.of(new User()));
-        when(passwordEncoder.matches(anyString(), anyString())).thenReturn(false);
-
         userService.changePassword(UUID.randomUUID(), changePasswordData);
     }
 

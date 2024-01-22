@@ -20,16 +20,13 @@ import java.util.UUID;
 public class TrainingService {
 
     private final Logger logger = LoggerFactory.getLogger(TrainingService.class);
-    private final TrainingRepo trainingRepo;
-    private final TrainerRepo trainerRepo;
-    private final TraineeRepo traineeRepo;
 
     @Autowired
-    public TrainingService(TrainingRepo trainingRepo, TrainerRepo trainerRepo, TraineeRepo traineeRepo) {
-        this.trainingRepo = trainingRepo;
-        this.trainerRepo = trainerRepo;
-        this.traineeRepo = traineeRepo;
-    }
+    private TrainingRepo trainingRepo;
+    @Autowired
+    private TrainerRepo trainerRepo;
+    @Autowired
+    private TraineeRepo traineeRepo;
 
     public Training create(UUID transactionId, TrainingData trainingData){
         logger.info("Transaction ID: {}, Creating training with data: {}", transactionId, trainingData);

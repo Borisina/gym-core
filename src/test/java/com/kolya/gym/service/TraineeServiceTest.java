@@ -9,11 +9,11 @@ import com.kolya.gym.domain.Training;
 import com.kolya.gym.domain.User;
 import com.kolya.gym.repo.TraineeRepo;
 import com.kolya.gym.repo.TrainerRepo;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,8 +23,9 @@ import java.util.UUID;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class TraineeServiceTest {
     @Mock
     private TraineeRepo traineeRepo;
@@ -34,14 +35,9 @@ public class TraineeServiceTest {
 
     @Mock
     private UserService userService;
-
+    @InjectMocks
     private TraineeService traineeService;
 
-    @Before
-    public void setup() {
-        MockitoAnnotations.initMocks(this);
-        this.traineeService = new TraineeService(traineeRepo, trainerRepo, userService);
-    }
 
     @Test
     public void testCreateTraineeSuccess() {
@@ -58,7 +54,6 @@ public class TraineeServiceTest {
         TraineeDataUpdate traineeData = new TraineeDataUpdate();
         traineeData.setUsername("username");
         when(traineeRepo.findByUserUsername("username")).thenReturn(Optional.of(new Trainee()));
-        when(traineeRepo.save(any(Trainee.class))).thenReturn(new Trainee());
         Trainee trainee = traineeService.update(UUID.randomUUID(), traineeData);
         assertNotNull(trainee);
     }
@@ -68,6 +63,7 @@ public class TraineeServiceTest {
         when(traineeRepo.findByUserUsername(anyString())).thenReturn(Optional.of(new Trainee()));
         Trainee trainee = traineeService.getByUsername(UUID.randomUUID(), "username");
         assertNotNull(trainee);
+
     }
 
     @Test
@@ -79,12 +75,12 @@ public class TraineeServiceTest {
         when(traineeRepo.findByUserUsername(anyString())).thenReturn(Optional.of(trainee));
         boolean isActive = traineeService.changeActiveStatus(UUID.randomUUID(), "username");
         assertFalse(isActive);
+
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testUpdateTraineeFailure() {
         TraineeDataUpdate traineeData = new TraineeDataUpdate();
-        when(traineeRepo.save(any(Trainee.class))).thenThrow(IllegalArgumentException.class);
         traineeService.update(UUID.randomUUID(), traineeData);
     }
 
