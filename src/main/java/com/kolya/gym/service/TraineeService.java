@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class TraineeService {
@@ -30,6 +28,9 @@ public class TraineeService {
     private TrainerRepo trainerRepo;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TrainerWorkloadService trainerWorkloadService;
 
 
     @Transactional
@@ -56,10 +57,10 @@ public class TraineeService {
     }
 
     @Transactional
-    public List<Trainer> updateList(UUID transactionId, List<String> trainersUsernamesList, String username) throws IllegalArgumentException{
+    public Set<Trainer> updateList(UUID transactionId, List<String> trainersUsernamesList, String username) throws IllegalArgumentException{
         logger.info("Transaction ID: {}, Updating trainee's ({}) trainersList with data: {}", transactionId, username, trainersUsernamesList);
         Trainee trainee = getByUsername(transactionId, username);
-        List<Trainer> trainerList = new ArrayList<>();
+        Set<Trainer> trainerList = new HashSet<>();
         for (String trainersUsername:trainersUsernamesList){
             Trainer trainerFromDb = trainerRepo.findByUserUsername(trainersUsername)
                     .orElseThrow(()->new IllegalArgumentException("There is no trainer with username = "+username));
@@ -77,10 +78,13 @@ public class TraineeService {
         return trainee;
     }
 
+    @Transactional
     public Trainee deleteByUsername(UUID transactionId, String username) throws IllegalArgumentException {
         logger.info("Transaction ID: {}, Deleting trainee with username {}", transactionId, username);
-        Trainee trainee = traineeRepo.deleteByUsername(username);
-        if(trainee==null) throw new IllegalArgumentException("There is no trainee with username = "+username);
+        Trainee trainee = getByUsername(transactionId, username);
+        List<Training> trainings = trainee.getTrainingsList();
+        traineeRepo.deleteByUserUsername(username);
+        trainerWorkloadService.deleteTrainings(transactionId, trainings);
         logger.info("Transaction ID: {}, Trainee with username {} was deleted", transactionId, username);
         return trainee;
     }

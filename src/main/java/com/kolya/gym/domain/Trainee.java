@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Trainee {
@@ -21,13 +25,8 @@ public class Trainee {
     private String address;
 
     @JsonIgnoreProperties({"traineesList"})
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name="trainees_trainers",
-            joinColumns = {@JoinColumn(name="trainee_id")},
-            inverseJoinColumns ={@JoinColumn(name="trainer_id")}
-    )
-    private List<Trainer> trainersList;
+    @ManyToMany(mappedBy = "traineesList")
+    private Set<Trainer> trainersList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY)
@@ -70,11 +69,11 @@ public class Trainee {
         this.user = user;
     }
 
-    public List<Trainer> getTrainersList() {
+    public Set<Trainer> getTrainersList() {
         return trainersList;
     }
 
-    public void setTrainersList(List<Trainer> trainersList) {
+    public void setTrainersList(Set<Trainer> trainersList) {
         this.trainersList = trainersList;
     }
 
