@@ -4,13 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.kolya.gym.converter.TrainingTypeConverter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
-
 import javax.persistence.*;
 
 import java.util.List;
-import java.util.Set;
 
 @Entity
 public class Trainer{
@@ -25,13 +21,13 @@ public class Trainer{
 
 
     @JsonIgnoreProperties({"trainersList","dateOfBirth","address"})
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name="trainees_trainers",
             joinColumns = {@JoinColumn(name="trainer_id")},
             inverseJoinColumns ={@JoinColumn(name="trainee_id")}
     )
-    private Set<Trainee> traineesList;
+    private List<Trainee> traineesList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
@@ -66,11 +62,11 @@ public class Trainer{
         this.user = user;
     }
 
-    public Set<Trainee> getTraineesList() {
+    public List<Trainee> getTraineesList() {
         return traineesList;
     }
 
-    public void setTraineesList(Set<Trainee> traineesList) {
+    public void setTraineesList(List<Trainee> traineesList) {
         this.traineesList = traineesList;
     }
 

@@ -13,6 +13,7 @@ public interface TrainerRepo extends CrudRepository<Trainer,Long> {
     List<Trainer> findAll();
     Optional<Trainer> findByUserUsername(String username);
 
+
     @Query(nativeQuery = true, value = "SELECT ter.specialization, ter.id, u.first_name, u.last_name, ter.username FROM trainer ter " +
             "INNER JOIN usr u ON ter.username = u.username " +
             "LEFT JOIN trainees_trainers tt ON ter.id = tt.trainer_id " +

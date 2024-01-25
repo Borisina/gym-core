@@ -7,7 +7,6 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>2.3.12.RELEASE</version>
-    <!--version>3.2.0</version-->
     <relativePath/> <!-- lookup parent from repository -->
   </parent>
   <groupId>org.kolya</groupId>
@@ -20,7 +19,6 @@
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
     <java.version>11</java.version>
-    <spring-cloud.version>Hoxton.SR10</spring-cloud.version>
   </properties>
 
   <dependencies>
@@ -113,7 +111,6 @@
       <version>0.11.2</version>
       <scope>runtime</scope>
     </dependency>
-
     <dependency>
       <groupId>io.jsonwebtoken</groupId>
       <artifactId>jjwt-jackson</artifactId> <!-- or jjwt-gson if Gson is preferred -->
@@ -121,36 +118,7 @@
       <scope>runtime</scope>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-server -->
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.cloud</groupId>
-      <artifactId>spring-cloud-starter-openfeign</artifactId>
-    </dependency>
-
-
   </dependencies>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.springframework.cloud</groupId>
-        <artifactId>spring-cloud-starter-parent</artifactId>
-        <version>${spring-cloud.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
   <build>
     <finalName>gym</finalName>
@@ -197,16 +165,14 @@
 
           <configuration>
             <excludes>
-              <exclude>com/kolya/gym/actuator/*</exclude>
-              <exclude>com/kolya/gym/builder/*</exclude>
-              <exclude>**/config/*</exclude>
-              <exclude>com/kolya/gym/converter/*</exclude>
-              <exclude>com/kolya/gym/data/*</exclude>
               <exclude>com/kolya/gym/domain/*</exclude>
-              <exclude>com/kolya/gym/exception/*</exclude>
-              <exclude>com/kolya/gym/feign/*</exclude>
-              <exclude>com/kolya/gym/prepareddata/*</exclude>
+              <exclude>com/kolya/gym/data/*</exclude>
+              <exclude>com/kolya/gym/builder/*</exclude>
+              <exclude>com/kolya/gym/actuator/*</exclude>
+              <exclude>com/kolya/gym/converter/*</exclude>
+              <exclude>**/config/*</exclude>
               <exclude>**/Main.class</exclude>
+              <exclude>com/kolya/gym/prepareddata/*</exclude>
             </excludes>
           </configuration>
         </plugin>

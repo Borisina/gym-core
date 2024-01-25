@@ -1,20 +1,23 @@
 package com.kolya.gym.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javax.servlet.*;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.web.filter.GenericFilterBean;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
 
 @Component
-public class BearerTokenFilter extends GenericFilter {
+public class BearerTokenFilter extends GenericFilterBean {
 
-    @Value("${auth-bearer-token}")
+    @Value("${auth.bearer.token}")
     private String bearerToken;
 
     @Override

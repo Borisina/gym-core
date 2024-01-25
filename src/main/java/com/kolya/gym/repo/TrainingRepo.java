@@ -47,5 +47,9 @@ public interface TrainingRepo extends CrudRepository<Training,Long> {
             @Param("training_date_from") Date trainingDateFrom,
             @Param("training_date_to") Date trainingDateTo
     );
+
+    List<Training> findByTrainee(Trainee trainee);
+
+    List<Training> findByTrainer(Trainer trainer);
 }
 

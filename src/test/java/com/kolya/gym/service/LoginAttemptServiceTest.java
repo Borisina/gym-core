@@ -1,15 +1,13 @@
 package com.kolya.gym.service;
 
-import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.Before;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
 public class LoginAttemptServiceTest {
     public static final String TEST_KEY = "key1";
 
@@ -19,8 +17,8 @@ public class LoginAttemptServiceTest {
     int MAX_ATTEMPT = 3;
 
     @Before
-    public void setUp(){
-        service.postConstruct();
+    public void setup() {
+        MockitoAnnotations.initMocks(this);
     }
 
 

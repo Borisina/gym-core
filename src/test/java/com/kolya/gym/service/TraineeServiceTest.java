@@ -15,7 +15,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -100,7 +103,7 @@ public class TraineeServiceTest {
         when(trainerRepo.findByUserUsername(anyString())).thenReturn(Optional.of(new Trainer()));
         List<String> trainersUsernamesList = new ArrayList<>();
         trainersUsernamesList.add("trainerUsername");
-        Set<Trainer> trainerList = traineeService.updateList(UUID.randomUUID(), trainersUsernamesList, "username");
+        List<Trainer> trainerList = traineeService.updateList(UUID.randomUUID(), trainersUsernamesList, "username");
         assertNotNull(trainerList);
     }
 
@@ -111,10 +114,10 @@ public class TraineeServiceTest {
         trainersUsernamesList.add("trainerUsername");
         traineeService.updateList(UUID.randomUUID(), trainersUsernamesList, "username");
     }
-/*
+
     @Test
     public void testDeleteByUsernameSuccess() {
-        when(traineeRepo.deleteByUsername(anyString())).thenReturn();
+        when(traineeRepo.deleteByUsername(anyString())).thenReturn(new Trainee());
         Trainee trainee = traineeService.deleteByUsername(UUID.randomUUID(), "username");
         assertNotNull(trainee);
     }
@@ -124,7 +127,7 @@ public class TraineeServiceTest {
         when(traineeRepo.deleteByUsername(anyString())).thenThrow(IllegalArgumentException.class);
         traineeService.deleteByUsername(UUID.randomUUID(), "username");
     }
-*/
+
     @Test
     public void testGetTrainingsSuccess() {
         Trainee trainee = new Trainee();

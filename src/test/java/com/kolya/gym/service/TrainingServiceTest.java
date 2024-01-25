@@ -16,7 +16,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.kolya.gym.prepareddata.PreparedData.trainingDataList;
 import static org.junit.Assert.assertNotNull;
@@ -33,12 +36,9 @@ public class TrainingServiceTest {
     private TrainerRepo trainerRepo;
 
     @Mock
-    private TrainerWorkloadService trainerWorkloadService;
-    @Mock
     private TraineeRepo traineeRepo;
     @InjectMocks
     private TrainingService trainingService;
-
 
 
 
@@ -46,9 +46,9 @@ public class TrainingServiceTest {
     public void testCreateTrainingSuccess() {
         TrainingData trainingData = trainingDataList.get(0);
         Trainer trainer = new Trainer();
-        trainer.setTraineesList(new HashSet<>());
+        trainer.setTraineesList(new ArrayList<>());
         Trainee trainee = new Trainee();
-        trainee.setTrainersList(new HashSet<>());
+        trainee.setTrainersList(new ArrayList<>());
         when(trainingRepo.save(any(Training.class))).thenReturn(new Training());
         when(trainerRepo.findByUserUsername(any(String.class))).thenReturn(Optional.of(trainer));
         when(traineeRepo.findByUserUsername(any(String.class))).thenReturn(Optional.of(trainee));

@@ -1,7 +1,6 @@
 <configuration>
     <!--logger name="springfox" level="DEBUG"/-->
     <!--logger name="org.flywaydb" level="debug"/-->
-    <!--logger name="org.springframework.cloud" level="debug"/-->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
@@ -9,7 +8,7 @@
     </appender>
 
     <appender name="FILE" class="ch.qos.logback.core.FileAppender">
-        <file>D:/Epam/UzJava/microservices/gym/logs.log</file>
+        <file>D:/Epam/UzJava/spring-security/gym/logs.log</file>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
         </encoder>
@@ -19,8 +18,4 @@
         <appender-ref ref="FILE"/>
         <appender-ref ref="STDOUT"/>
     </root>
-
-    <!--root level="DEBUG">
-        <appender-ref ref="STDOUT"/>
-    </root-->
 </configuration>
