@@ -4,7 +4,9 @@ import com.kolya.gym.actuator.PrometheusMetrics;
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.TrainerData;
 import com.kolya.gym.domain.Trainer;
+import com.kolya.gym.domain.TrainerWorkload;
 import com.kolya.gym.service.TrainerService;
+import com.kolya.gym.service.TrainerWorkloadService;
 import com.kolya.gym.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.naming.ServiceUnavailableException;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +36,8 @@ public class TrainerController {
     private TrainerService trainerService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private TrainerWorkloadService trainerWorkloadService;
     @Autowired
     private PrometheusMetrics prometheusMetrics;
 
@@ -137,6 +142,30 @@ public class TrainerController {
         }catch (IllegalArgumentException e){
             logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @ApiOperation(value = "Get trainer workload buy username", response = ResponseEntity.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK, Trainer's workload returned"),
+            @ApiResponse(code = 400, message = "BAD_REQUEST, the request body or params are invalid or incorrect"),
+            @ApiResponse(code = 503, message = "SERVICE_UNAVAILABLE, TRAINER-WORKLOAD-SERVICE is unavailable now"),
+    })
+    @GetMapping("/{username}/workload")
+    public ResponseEntity<?> getWorkload(@PathVariable("username") String username){
+        UUID transactionId = UUID.randomUUID();
+        logger.info("Transaction ID: {}, GET /trainers/{}/workload was called",transactionId, username);
+        try{
+            userService.validateUsername(username);
+            TrainerWorkload trainerWorkload = trainerWorkloadService.getTrainerWorkload(transactionId, username);
+            logger.info("Transaction ID: {}, 200 OK, Trainer Workload returned: {}", transactionId, trainerWorkload);
+            return ResponseEntity.status(HttpStatus.OK).body(trainerWorkload);
+        }catch (IllegalArgumentException e ){
+            logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (ServiceUnavailableException e) {
+            logger.info("Transaction ID: {}, 503 SERVICE_UNAVAILABLE, {}", transactionId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());
         }
     }
 }

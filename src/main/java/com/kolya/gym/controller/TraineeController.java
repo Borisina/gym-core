@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Api(value = "API for trainees", tags = "Trainees")
@@ -133,8 +134,8 @@ public class TraineeController {
         logger.info("Transaction ID: {}, PUT /trainees/{}/trainers was called with body {}", transactionId, username, trainersList);
         try{
             userService.validateUsername(username);
-            List<Trainer> trainers = traineeService.updateList(transactionId, trainersList,username);
-            logger.info("Transaction ID: {}, 200 OK, Trainee's traineersList was updated {}", transactionId, trainers);
+            Set<Trainer> trainers = traineeService.updateList(transactionId, trainersList,username);
+            logger.info("Transaction ID: {}, 200 OK, Trainee's trainersList was updated {}", transactionId, trainers);
             return ResponseEntity.status(HttpStatus.OK).body(trainers);
         }catch (IllegalArgumentException e){
             logger.info("Transaction ID: {}, 400 BAD_REQUEST, {}", transactionId, e.getMessage());

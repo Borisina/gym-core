@@ -15,6 +15,5 @@ public interface TraineeRepo extends CrudRepository<Trainee, Long> {
 
     Optional<Trainee> findByUserUsername(String username);
 
-    @Query(nativeQuery = true,value = "DELETE FROM trainee WHERE username=:username RETURNING *")
-    Trainee deleteByUsername(@Param("username") String username);
+    void deleteByUserUsername(String username);
 }

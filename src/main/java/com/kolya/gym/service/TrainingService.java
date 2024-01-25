@@ -1,6 +1,8 @@
 package com.kolya.gym.service;
 
+import com.kolya.gym.builder.TrainerWorkloadRequestDataBuilder;
 import com.kolya.gym.builder.TrainingDataBuilder;
+import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.data.TrainingCriteria;
 import com.kolya.gym.data.TrainingData;
 import com.kolya.gym.domain.*;
@@ -28,9 +30,14 @@ public class TrainingService {
     @Autowired
     private TraineeRepo traineeRepo;
 
+    @Autowired
+    private TrainerWorkloadService trainerWorkloadService;
+
     public Training create(UUID transactionId, TrainingData trainingData){
         logger.info("Transaction ID: {}, Creating training with data: {}", transactionId, trainingData);
         Training training = getTrainingFromData(transactionId, trainingData);
+        TrainerWorkloadRequestData requestData = trainerWorkloadService.getRequestDataFromTraining(training);
+        trainerWorkloadService.addTraining(transactionId, requestData);
         training = trainingRepo.save(training);
         logger.info("Transaction ID: {}, Training was created: {}", transactionId, training);
         return training;
@@ -82,7 +89,6 @@ public class TrainingService {
         Training training = new Training();
         Trainer trainer = trainerRepo.findByUserUsername(data.getTrainerUsername()).orElseThrow(()->new IllegalArgumentException("There is no trainer with username = "+data.getTrainerUsername()));
         Trainee trainee = traineeRepo.findByUserUsername(data.getTraineeUsername()).orElseThrow(()->new IllegalArgumentException("There is no trainee with username = "+data.getTraineeUsername()));
-        trainer.getTraineesList().add(trainee);
         trainee.getTrainersList().add(trainer);
         training.setTrainingDate(data.getTrainingDate());
         training.setTrainingType(data.getTrainingType());
@@ -126,4 +132,6 @@ public class TrainingService {
         logger.info("Transaction ID: {}, Training Types were returned {}", transactionId,types);
         return types;
     }
+
+
 }
