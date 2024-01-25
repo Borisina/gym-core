@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.*;
 
 @org.springframework.cloud.openfeign.FeignClient("TRAINER-WORKLOAD-SERVICE")
 public interface FeignClient {
-    @PostMapping
+    @PostMapping("/trainer-workload")
     ResponseEntity<String> addTraining(@RequestHeader("Authorization") String bearerToken, TrainerWorkloadRequestData requestData);
 
-    @DeleteMapping
+    @DeleteMapping("/trainer-workload")
     ResponseEntity<String> deleteTraining(@RequestHeader("Authorization") String bearerToken, TrainerWorkloadRequestData requestData);
 
-    @GetMapping("/{username}")
+    @GetMapping("/trainer-workload/{username}")
     TrainerWorkload getTrainerWorkload(@RequestHeader("Authorization") String bearerToken, @PathVariable("username") String username);
 }
