@@ -13,10 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class TrainingService {
@@ -58,9 +55,9 @@ public class TrainingService {
                 trainingCriteria.getTrainingName(),
                 trainingCriteria.getTrainingDateFrom(),
                 trainingCriteria.getTrainingDateTo());
-        List<TrainingData> trainingDataList = trainingListToTrainingDataList(trainingList);
-        logger.info("Transaction ID: {}, Trainings were returned {}", transactionId, trainingDataList);
-        return  trainingDataList;
+        List<TrainingData> trainingDataSet = trainingsToTrainingDataList(trainingList);
+        logger.info("Transaction ID: {}, Trainings were returned {}", transactionId, trainingDataSet);
+        return  trainingDataSet;
     }
 
     public List<TrainingData> getByTrainerUsernameAndCriteria(UUID transactionId, String username, TrainingCriteria trainingCriteria) throws IllegalArgumentException{
@@ -71,14 +68,14 @@ public class TrainingService {
         if (trainingCriteria.getTrainingType()!=null){
             trainingType = trainingCriteria.getTrainingType().name();
         }
-        List<Training> trainingList = trainingRepo.findByTrainerIdAndCriteria(
+        List<Training> trainingSet = trainingRepo.findByTrainerIdAndCriteria(
                 trainer.getId(),
                 trainingType,
                 trainingCriteria.getTrainingName(),
                 trainingCriteria.getTrainingDateFrom(),
                 trainingCriteria.getTrainingDateTo());
 
-        List<TrainingData> trainingDataList = trainingListToTrainingDataList(trainingList);
+        List<TrainingData> trainingDataList = trainingsToTrainingDataList(trainingSet);
         logger.info("Transaction ID: {}, Trainings were returned {}", transactionId, trainingDataList);
         return  trainingDataList;
     }
@@ -89,7 +86,7 @@ public class TrainingService {
         Training training = new Training();
         Trainer trainer = trainerRepo.findByUserUsername(data.getTrainerUsername()).orElseThrow(()->new IllegalArgumentException("There is no trainer with username = "+data.getTrainerUsername()));
         Trainee trainee = traineeRepo.findByUserUsername(data.getTraineeUsername()).orElseThrow(()->new IllegalArgumentException("There is no trainee with username = "+data.getTraineeUsername()));
-        trainee.getTrainersList().add(trainer);
+        trainee.getTrainersSet().add(trainer);
         training.setTrainingDate(data.getTrainingDate());
         training.setTrainingType(data.getTrainingType());
         training.setTrainingName(data.getTrainingName());
@@ -111,11 +108,9 @@ public class TrainingService {
                 .build();
     }
 
-    public List<TrainingData> trainingListToTrainingDataList(List<Training> trainingList){
+    public List<TrainingData> trainingsToTrainingDataList(Collection<Training> trainings){
         List<TrainingData> trainingDataList = new ArrayList<>();
-        for (Training training:trainingList){
-            trainingDataList.add(getTrainingData(training));
-        }
+        trainings.forEach(training -> trainingDataList.add(getTrainingData(training)));
         return trainingDataList;
     }
 

@@ -111,26 +111,13 @@ public class TraineeServiceTest {
         trainersUsernamesList.add("trainerUsername");
         traineeService.updateList(UUID.randomUUID(), trainersUsernamesList, "username");
     }
-/*
-    @Test
-    public void testDeleteByUsernameSuccess() {
-        when(traineeRepo.deleteByUsername(anyString())).thenReturn();
-        Trainee trainee = traineeService.deleteByUsername(UUID.randomUUID(), "username");
-        assertNotNull(trainee);
-    }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void testDeleteByUsernameFailure() {
-        when(traineeRepo.deleteByUsername(anyString())).thenThrow(IllegalArgumentException.class);
-        traineeService.deleteByUsername(UUID.randomUUID(), "username");
-    }
-*/
     @Test
     public void testGetTrainingsSuccess() {
         Trainee trainee = new Trainee();
-        trainee.setTrainingsList(new ArrayList<>());
+        trainee.setTrainingsSet(new HashSet<>());
         when(traineeRepo.findByUserUsername(anyString())).thenReturn(Optional.of(trainee));
-        List<Training> trainingList = traineeService.getTrainings(UUID.randomUUID(), "username");
+        Set<Training> trainingList = traineeService.getTrainings(UUID.randomUUID(), "username");
         assertNotNull(trainingList);
     }
 

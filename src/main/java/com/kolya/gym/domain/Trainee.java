@@ -26,11 +26,11 @@ public class Trainee {
 
     @JsonIgnoreProperties({"traineesList"})
     @ManyToMany(mappedBy = "traineesList")
-    private Set<Trainer> trainersList;
+    private Set<Trainer> trainersSet;
 
     @JsonIgnore
     @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY)
-    private List<Training> trainingsList;
+    private Set<Training> trainingsSet;
 
     @JsonUnwrapped
     @OneToOne(cascade = CascadeType.ALL)
@@ -69,20 +69,20 @@ public class Trainee {
         this.user = user;
     }
 
-    public Set<Trainer> getTrainersList() {
-        return trainersList;
+    public Set<Trainer> getTrainersSet() {
+        return trainersSet;
     }
 
-    public void setTrainersList(Set<Trainer> trainersList) {
-        this.trainersList = trainersList;
+    public void setTrainersSet(Set<Trainer> trainersSet) {
+        this.trainersSet = trainersSet;
     }
 
-    public List<Training> getTrainingsList() {
-        return trainingsList;
+    public Set<Training> getTrainingsSet() {
+        return trainingsSet;
     }
 
-    public void setTrainingsList(List<Training> trainingsList) {
-        this.trainingsList = trainingsList;
+    public void setTrainingsSet(Set<Training> trainingsSet) {
+        this.trainingsSet = trainingsSet;
     }
 
     @Override

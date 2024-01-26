@@ -31,11 +31,11 @@ public class Trainer{
             joinColumns = {@JoinColumn(name="trainer_id")},
             inverseJoinColumns ={@JoinColumn(name="trainee_id")}
     )
-    private Set<Trainee> traineesList;
+    private Set<Trainee> traineesSet;
 
     @JsonIgnore
     @OneToMany(mappedBy = "trainer", fetch = FetchType.LAZY)
-    private List<Training> trainingsList;
+    private Set<Training> trainingsSet;
 
     @JsonUnwrapped
     @OneToOne(cascade = CascadeType.ALL)
@@ -66,20 +66,20 @@ public class Trainer{
         this.user = user;
     }
 
-    public Set<Trainee> getTraineesList() {
-        return traineesList;
+    public Set<Trainee> getTraineesSet() {
+        return traineesSet;
     }
 
-    public void setTraineesList(Set<Trainee> traineesList) {
-        this.traineesList = traineesList;
+    public void setTraineesList(Set<Trainee> traineesSet) {
+        this.traineesSet = traineesSet;
     }
 
-    public List<Training> getTrainingsList() {
-        return trainingsList;
+    public Set<Training> getTrainingsSet() {
+        return trainingsSet;
     }
 
-    public void setTrainingsList(List<Training> trainingsList) {
-        this.trainingsList = trainingsList;
+    public void setTrainingsSet(Set<Training> trainingsSet) {
+        this.trainingsSet = trainingsSet;
     }
 
     @Override

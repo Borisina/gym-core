@@ -27,6 +27,7 @@ brute-force-protector:
   max-attempt: 3
   block-time-minute: 5
 secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
+audience-type: 'service'
 eureka:
   client:
     serviceUrl:

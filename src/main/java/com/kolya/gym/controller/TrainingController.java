@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -68,7 +69,7 @@ public class TrainingController {
         try{
             List<TrainingData> trainings=null;
             if (trainingService.isEmptyCriteria(trainingCriteria)){
-                trainings = trainingService.trainingListToTrainingDataList(traineeService.getTrainings(transactionId, username));
+                trainings = trainingService.trainingsToTrainingDataList(traineeService.getTrainings(transactionId, username));
             }else{
                 trainingCriteria.validate();
                 trainings = trainingService.getByTraineeUsernameAndCriteria(transactionId, username,trainingCriteria);
@@ -93,7 +94,7 @@ public class TrainingController {
         try{
             List<TrainingData> trainings= Collections.emptyList();;
             if (trainingService.isEmptyCriteria(trainingCriteria)){
-                trainings = trainingService.trainingListToTrainingDataList(trainerService.getTrainings(transactionId, username));
+                trainings = trainingService.trainingsToTrainingDataList(trainerService.getTrainings(transactionId, username));
             }else{
                 trainingCriteria.validate();
                 trainings = trainingService.getByTrainerUsernameAndCriteria(transactionId, username,trainingCriteria);

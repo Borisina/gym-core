@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import javax.naming.ServiceUnavailableException;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -55,11 +56,13 @@ public class TrainerWorkloadService {
         return trainerWorkload;
     }
 
-    public void deleteTrainings(UUID transactionId, List<Training> trainingList){
-        Date now = new Date();
-        trainingList.stream()
-                .filter(training -> training.getTrainingDate().after(now))
-                .forEach(training -> deleteTraining(transactionId, getRequestDataFromTraining(training)));
+    public void deleteTrainings(UUID transactionId, Set<Training> trainingSet){
+        if (trainingSet!=null){
+            Date now = new Date();
+            trainingSet.stream()
+                    .filter(training -> training.getTrainingDate().after(now))
+                    .forEach(training -> deleteTraining(transactionId, getRequestDataFromTraining(training)));
+        }
     }
 
     public void fallbackAddTraining(UUID transactionId, TrainerWorkloadRequestData requestData, Throwable hystrixCommand) {

@@ -32,6 +32,8 @@ public class JwtService {
     @Value("${secret-key}")
     private String SECRET_KEY;
 
+    @Value("${audience-type}")
+    private String AUDIENCE_TYPE;
 
     private String tokenForServices;
 
@@ -107,7 +109,7 @@ public class JwtService {
     private boolean isTokenForServicesValid(String token) {
         try{
             String audience = extractAudience(token);
-            return (audience!=null && audience.equals("service") && !isTokenExpired(token));
+            return (audience!=null && audience.equals(AUDIENCE_TYPE) && !isTokenExpired(token));
         }catch (SignatureException e){
             return false;
         }

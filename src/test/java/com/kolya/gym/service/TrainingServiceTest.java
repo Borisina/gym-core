@@ -48,7 +48,7 @@ public class TrainingServiceTest {
         Trainer trainer = new Trainer();
         trainer.setTraineesList(new HashSet<>());
         Trainee trainee = new Trainee();
-        trainee.setTrainersList(new HashSet<>());
+        trainee.setTrainersSet(new HashSet<>());
         when(trainingRepo.save(any(Training.class))).thenReturn(new Training());
         when(trainerRepo.findByUserUsername(any(String.class))).thenReturn(Optional.of(trainer));
         when(traineeRepo.findByUserUsername(any(String.class))).thenReturn(Optional.of(trainee));

@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -90,10 +91,10 @@ public class TrainerService {
         return newStatus;
     }
 
-    public List<Training> getTrainings(UUID transactionId, String username) throws IllegalArgumentException{
+    public Set<Training> getTrainings(UUID transactionId, String username) throws IllegalArgumentException{
         logger.info("Transaction ID: {}, Getting trainer's ({}) trainings", transactionId, username);
         Trainer trainer = getByUsername(transactionId, username);
-        logger.info("Transaction ID: {}, Trainer's ({}) trainings were returned: {}", transactionId, username, trainer.getTrainingsList());
-        return trainer.getTrainingsList();
+        logger.info("Transaction ID: {}, Trainer's ({}) trainings were returned: {}", transactionId, username, trainer.getTrainingsSet());
+        return trainer.getTrainingsSet();
     }
 }
