@@ -7,6 +7,7 @@ import com.kolya.gym.domain.TrainerWorkload;
 import com.kolya.gym.domain.Training;
 import com.kolya.gym.feign.FeignClient;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import org.apache.commons.collections4.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.naming.ServiceUnavailableException;
 import java.util.Date;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,12 +57,10 @@ public class TrainerWorkloadService {
     }
 
     public void deleteTrainings(UUID transactionId, Set<Training> trainingSet){
-        if (trainingSet!=null){
-            Date now = new Date();
-            trainingSet.stream()
-                    .filter(training -> training.getTrainingDate().after(now))
-                    .forEach(training -> deleteTraining(transactionId, getRequestDataFromTraining(training)));
-        }
+        Date now = new Date();
+        CollectionUtils.emptyIfNull(trainingSet).stream()
+                .filter(training -> training.getTrainingDate().after(now))
+                .forEach(training -> deleteTraining(transactionId, getRequestDataFromTraining(training)));
     }
 
     public void fallbackAddTraining(UUID transactionId, TrainerWorkloadRequestData requestData, Throwable hystrixCommand) {
