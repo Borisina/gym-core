@@ -13,4 +13,6 @@ public class TrainerWorkload {
     public void setWorkload(Map<Integer, Map<String, Integer>> list) {
         this.workLoad = list;
     }
+
+
 }

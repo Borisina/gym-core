@@ -24,8 +24,8 @@ public class Trainee {
     private Date dateOfBirth;
     private String address;
 
-    @JsonIgnoreProperties({"traineesList"})
-    @ManyToMany(mappedBy = "traineesList")
+    @JsonIgnoreProperties({"traineesSet"})
+    @ManyToMany(mappedBy = "traineesSet")
     private Set<Trainer> trainersSet;
 
     @JsonIgnore

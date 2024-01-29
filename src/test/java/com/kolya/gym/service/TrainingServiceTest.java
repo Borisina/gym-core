@@ -46,7 +46,7 @@ public class TrainingServiceTest {
     public void testCreateTrainingSuccess() {
         TrainingData trainingData = trainingDataList.get(0);
         Trainer trainer = new Trainer();
-        trainer.setTraineesList(new HashSet<>());
+        trainer.setTraineesSet(new HashSet<>());
         Trainee trainee = new Trainee();
         trainee.setTrainersSet(new HashSet<>());
         when(trainingRepo.save(any(Training.class))).thenReturn(new Training());

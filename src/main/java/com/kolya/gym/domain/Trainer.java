@@ -70,7 +70,7 @@ public class Trainer{
         return traineesSet;
     }
 
-    public void setTraineesList(Set<Trainee> traineesSet) {
+    public void setTraineesSet(Set<Trainee> traineesSet) {
         this.traineesSet = traineesSet;
     }
 
