@@ -2,6 +2,7 @@ package com.kolya.gym.service;
 
 import com.kolya.gym.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.slf4j.Logger;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.security.SignatureException;
@@ -30,19 +32,28 @@ public class JwtService {
     @Value("${secret-key}")
     private String SECRET_KEY;
 
-    public String extractUsername(String token) throws SignatureException {
+    @Value("${audience-type}")
+    private String AUDIENCE_TYPE;
+
+    private String tokenForServices;
+
+    public String extractUsername(String token) throws SignatureException, ExpiredJwtException {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public Date extractExpiration(String token) throws SignatureException {
+    public Date extractExpiration(String token) throws SignatureException, ExpiredJwtException {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws SignatureException {
+    public String extractAudience(String token) throws SignatureException, ExpiredJwtException {
+        return extractClaim(token, Claims::getAudience);
+    }
+
+    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) throws SignatureException, ExpiredJwtException {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    private Claims extractAllClaims(String token) throws SignatureException {
+    private Claims extractAllClaims(String token) throws SignatureException, ExpiredJwtException {
         return Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token).getBody();
     }
 
@@ -59,16 +70,56 @@ public class JwtService {
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
-
         return Jwts.builder().setClaims(claims).setSubject(subject).setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
     }
 
-    public void validateToken(String token) throws SignatureException, InvalidTokenException {
-        String username = extractUsername(token);
-        if (!username.equals(userDetailsService.loadUserByUsername(username).getUsername()) && isTokenExpired(token)) {
-            throw new InvalidTokenException("Token is not valid");
+    public boolean isTokenValid(String token) {
+        try{
+            String username = extractUsername(token);
+            return (username.equals(userDetailsService.loadUserByUsername(username).getUsername()) && !isTokenExpired(token));
+        }catch (SignatureException | UsernameNotFoundException e) {
+            return false;
+        }
+
+    }
+
+    public String getTokenForServices(UUID transactionId){
+        logger.info("Transaction ID: {}, Getting jwt", transactionId);
+        if (tokenForServices==null || !isTokenForServicesValid(tokenForServices)){
+            tokenForServices = generateTokenForServices();
+        }
+        logger.info("Transaction ID: {}, Jwt returned: {}", transactionId,  tokenForServices);
+        return "Bearer "+tokenForServices;
+    }
+
+    private String generateTokenForServices() {
+        Map<String, Object> claims = new HashMap<>();
+        String token = createTokenForServices(claims);
+        return token;
+    }
+
+    private String createTokenForServices(Map<String, Object> claims) {
+        return Jwts.builder().setClaims(claims).setAudience("service").setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY).compact();
+    }
+
+    private boolean isTokenForServicesValid(String token) {
+        try{
+            String audience = extractAudience(token);
+            return (audience!=null && audience.equals(AUDIENCE_TYPE) && !isTokenExpired(token));
+        }catch (SignatureException e){
+            return false;
+        }
+    }
+
+    public String extractUsernameOrReturnNull(String token){
+        try{
+            return extractUsername(token);
+        }catch (Exception e) {
+            return null;
         }
     }
 }

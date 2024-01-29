@@ -4,10 +4,14 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Trainee {
@@ -20,18 +24,13 @@ public class Trainee {
     private Date dateOfBirth;
     private String address;
 
-    @JsonIgnoreProperties({"traineesList"})
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name="trainees_trainers",
-            joinColumns = {@JoinColumn(name="trainee_id")},
-            inverseJoinColumns ={@JoinColumn(name="trainer_id")}
-    )
-    private List<Trainer> trainersList;
+    @JsonIgnoreProperties({"traineesSet"})
+    @ManyToMany(mappedBy = "traineesSet")
+    private Set<Trainer> trainersSet;
 
     @JsonIgnore
     @OneToMany(mappedBy = "trainee", fetch = FetchType.LAZY)
-    private List<Training> trainingsList;
+    private Set<Training> trainingsSet;
 
     @JsonUnwrapped
     @OneToOne(cascade = CascadeType.ALL)
@@ -70,20 +69,20 @@ public class Trainee {
         this.user = user;
     }
 
-    public List<Trainer> getTrainersList() {
-        return trainersList;
+    public Set<Trainer> getTrainersSet() {
+        return trainersSet;
     }
 
-    public void setTrainersList(List<Trainer> trainersList) {
-        this.trainersList = trainersList;
+    public void setTrainersSet(Set<Trainer> trainersSet) {
+        this.trainersSet = trainersSet;
     }
 
-    public List<Training> getTrainingsList() {
-        return trainingsList;
+    public Set<Training> getTrainingsSet() {
+        return trainingsSet;
     }
 
-    public void setTrainingsList(List<Training> trainingsList) {
-        this.trainingsList = trainingsList;
+    public void setTrainingsSet(Set<Training> trainingsSet) {
+        this.trainingsSet = trainingsSet;
     }
 
     @Override

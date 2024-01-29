@@ -16,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class TraineeService {
@@ -30,6 +28,9 @@ public class TraineeService {
     private TrainerRepo trainerRepo;
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private TrainerWorkloadService trainerWorkloadService;
 
 
     @Transactional
@@ -56,18 +57,18 @@ public class TraineeService {
     }
 
     @Transactional
-    public List<Trainer> updateList(UUID transactionId, List<String> trainersUsernamesList, String username) throws IllegalArgumentException{
+    public Set<Trainer> updateList(UUID transactionId, List<String> trainersUsernamesList, String username) throws IllegalArgumentException{
         logger.info("Transaction ID: {}, Updating trainee's ({}) trainersList with data: {}", transactionId, username, trainersUsernamesList);
         Trainee trainee = getByUsername(transactionId, username);
-        List<Trainer> trainerList = new ArrayList<>();
-        for (String trainersUsername:trainersUsernamesList){
-            Trainer trainerFromDb = trainerRepo.findByUserUsername(trainersUsername)
-                    .orElseThrow(()->new IllegalArgumentException("There is no trainer with username = "+username));
-            trainerList.add(trainerFromDb);
-        }
-        trainee.setTrainersList(trainerList);
+        Set<Trainer> trainerSet = new HashSet<>();
+        trainersUsernamesList.forEach( trainersUsername -> {
+                    Trainer trainerFromDb = trainerRepo.findByUserUsername(trainersUsername)
+                            .orElseThrow(()->new IllegalArgumentException("There is no trainer with username = "+username));
+                    trainerSet.add(trainerFromDb);
+                });
+        trainee.setTrainersSet(trainerSet);
         logger.info("Transaction ID: {}, Trainee's ({}) trainersList was updated: {}",transactionId, username, trainersUsernamesList);
-        return trainerList;
+        return trainerSet;
     }
 
     public Trainee getByUsername(UUID transactionId, String username) throws IllegalArgumentException{
@@ -77,10 +78,13 @@ public class TraineeService {
         return trainee;
     }
 
+    @Transactional
     public Trainee deleteByUsername(UUID transactionId, String username) throws IllegalArgumentException {
         logger.info("Transaction ID: {}, Deleting trainee with username {}", transactionId, username);
-        Trainee trainee = traineeRepo.deleteByUsername(username);
-        if(trainee==null) throw new IllegalArgumentException("There is no trainee with username = "+username);
+        Trainee trainee = getByUsername(transactionId, username);
+        Set<Training> trainings = trainee.getTrainingsSet();
+        traineeRepo.deleteByUserUsername(username);
+        trainerWorkloadService.deleteTrainings(transactionId, trainings);
         logger.info("Transaction ID: {}, Trainee with username {} was deleted", transactionId, username);
         return trainee;
     }
@@ -95,11 +99,11 @@ public class TraineeService {
         return newStatus;
     }
 
-    public List<Training> getTrainings(UUID transactionId, String username) throws IllegalArgumentException{
+    public Set<Training> getTrainings(UUID transactionId, String username) throws IllegalArgumentException{
         logger.info("Transaction ID: {}, Getting trainee's ({}) trainings", transactionId, username);
         Trainee trainee = getByUsername(transactionId, username);
-        logger.info("Transaction ID: {}, Trainee's ({}) trainings were returned {}", transactionId, username, trainee.getTrainingsList());
-        return trainee.getTrainingsList();
+        logger.info("Transaction ID: {}, Trainee's ({}) trainings were returned {}", transactionId, username, trainee.getTrainingsSet());
+        return trainee.getTrainingsSet();
     }
 
     public Trainee getTraineeFromData(TraineeData traineeData){

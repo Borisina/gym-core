@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface TrainingRepo extends CrudRepository<Training,Long> {
@@ -47,9 +48,5 @@ public interface TrainingRepo extends CrudRepository<Training,Long> {
             @Param("training_date_from") Date trainingDateFrom,
             @Param("training_date_to") Date trainingDateTo
     );
-
-    List<Training> findByTrainee(Trainee trainee);
-
-    List<Training> findByTrainer(Trainer trainer);
 }
 

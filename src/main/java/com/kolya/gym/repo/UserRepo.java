@@ -13,13 +13,8 @@ import java.util.Optional;
 public interface UserRepo extends CrudRepository<User,Long> {
     List<User> findAll();
 
-    //@Query(nativeQuery=true, value = "SELECT COUNT(*) FROM usr WHERE username SIMILAR TO CONCAT(:username,'[0-9]*')")
-    //Long countDuplicates(@Param("username") String username);
-
     @Query(nativeQuery=true, value = "SELECT COUNT(*) FROM usr WHERE first_name=:first_name AND last_name=:last_name")
     Long countDuplicates(@Param("first_name") String firstname, @Param("last_name") String lastName);
-
-    User findByUsernameAndPassword(String username, String password);
 
     Optional<User> findByUsername(String username);
 }
