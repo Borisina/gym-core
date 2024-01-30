@@ -36,8 +36,8 @@ mq:
     type-id-property-name: '_type'
   queue:
     name:
-      add: 'trainee-workload-add'
-      delete: 'trainee-workload-delete'
+      add: 'trainer-workload-add'
+      delete: 'trainer-workload-delete'
 eureka:
   client:
     serviceUrl:

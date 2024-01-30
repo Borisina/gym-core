@@ -2,7 +2,6 @@ package com.kolya.gym.service;
 
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.domain.TrainerWorkload;
-import com.kolya.gym.domain.User;
 import com.kolya.gym.feign.FeignClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -13,10 +12,8 @@ import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.jms.core.JmsTemplate;
 
-import javax.crypto.KeyGenerator;
 import java.lang.reflect.Field;
 import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
