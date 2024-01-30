@@ -58,4 +58,16 @@ public class TrainerWorkloadRequestData {
     public void setTrainingDuration(int trainingDuration) {
         this.trainingDuration = trainingDuration;
     }
+
+    @Override
+    public String toString() {
+        return "TrainerWorkloadRequestData{" +
+                "username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", isActive=" + isActive +
+                ", trainingDate=" + trainingDate +
+                ", trainingDuration=" + trainingDuration +
+                '}';
+    }
 }

@@ -70,4 +70,16 @@ public class TrainingData {
     public void setDuration(int duration) {
         this.duration = duration;
     }
+
+    @Override
+    public String toString() {
+        return "TrainingData{" +
+                "trainerUsername='" + trainerUsername + '\'' +
+                ", traineeUsername='" + traineeUsername + '\'' +
+                ", trainingName='" + trainingName + '\'' +
+                ", trainingType=" + trainingType +
+                ", trainingDate=" + trainingDate +
+                ", duration=" + duration +
+                '}';
+    }
 }
