@@ -1,6 +1,8 @@
 package com.kolya.gym.data;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class TrainerWorkloadRequestData {
@@ -8,6 +10,7 @@ public class TrainerWorkloadRequestData {
     private String firstName;
     private String lastName;
     private boolean isActive;
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date trainingDate;
     private int trainingDuration;
 

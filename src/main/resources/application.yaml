@@ -28,6 +28,16 @@ brute-force-protector:
   block-time-minute: 5
 secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
 audience-type: 'service'
+mq:
+  password: 'admin'
+  username: 'admin'
+  url: 'tcp://localhost:61616'
+  converter:
+    type-id-property-name: '_type'
+  queue:
+    name:
+      add: 'trainee-workload-add'
+      delete: 'trainee-workload-delete'
 eureka:
   client:
     serviceUrl:
@@ -40,6 +50,8 @@ eureka:
 ---
 
 spring:
+  application:
+    name: MAIN
   profiles: test
   datasource:
     url: jdbc:postgresql://localhost:5432/gym_test
@@ -47,6 +59,7 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
   jpa:
+    show-sql: false
     hibernate:
       ddl-auto: none
 management:
@@ -58,17 +71,38 @@ management:
     health:
       show-details: always
 server:
-  port: 8000
+  port: 8090
 auth-bearer-token: 'myBearerToken'
 trainer-workload-service-bearer-token: 'myBearerToken2'
 brute-force-protector:
   max-attempt: 3
   block-time-minute: 5
 secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
+audience-type: 'service'
+mq:
+  password: 'admin'
+  username: 'admin'
+  url: 'tcp://localhost:61616'
+  converter:
+    type-id-property-name: '_type'
+  queue:
+    name:
+      add: 'add-training-queue'
+      delete: 'delete-training-queue'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost
 
 ---
 
 spring:
+  application:
+    name: MAIN
   profiles: prod
   datasource:
     url: jdbc:postgresql://localhost:5432/gym_prod
@@ -76,6 +110,7 @@ spring:
     password: root
     driver-class-name: org.postgresql.Driver
   jpa:
+    show-sql: false
     hibernate:
       ddl-auto: none
 management:
@@ -94,3 +129,22 @@ brute-force-protector:
   max-attempt: 3
   block-time-minute: 5
 secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
+audience-type: 'service'
+mq:
+  password: 'admin'
+  username: 'admin'
+  url: 'tcp://localhost:61616'
+  converter:
+    type-id-property-name: '_type'
+  queue:
+    name:
+      add: 'add-training-queue'
+      delete: 'delete-training-queue'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    hostname: localhost

@@ -2,15 +2,21 @@ package com.kolya.gym.service;
 
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.domain.TrainerWorkload;
+import com.kolya.gym.domain.User;
 import com.kolya.gym.feign.FeignClient;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.http.ResponseEntity;
+import org.springframework.jms.core.JmsTemplate;
 
+import javax.crypto.KeyGenerator;
+import java.lang.reflect.Field;
+import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -23,38 +29,40 @@ public class TrainerWorkloadServiceTest {
     @Mock
     private JwtService jwtService;
     @Mock
+    private JmsTemplate jmsTemplate;
+    @Mock
     private FeignClient feignClient;
+
+    private String QUEUE_NAME_ADD;
+    private String QUEUE_NAME_DELETE;
+
+    @Before
+    public void setup() throws NoSuchFieldException, IllegalAccessException, NoSuchAlgorithmException {
+        QUEUE_NAME_ADD = "QUEUE_NAME_ADD";
+        Field field = workloadService.getClass().getDeclaredField("QUEUE_NAME_ADD");
+        field.setAccessible(true);
+        field.set(workloadService, QUEUE_NAME_ADD);
+
+        QUEUE_NAME_DELETE = "QUEUE_NAME_DELETE";
+        Field field2 = workloadService.getClass().getDeclaredField("QUEUE_NAME_DELETE");
+        field2.setAccessible(true);
+        field2.set(workloadService, QUEUE_NAME_DELETE);
+    }
 
     @Test
     public void addTrainingTest() {
         UUID transactionId = UUID.randomUUID();
         TrainerWorkloadRequestData requestData = Mockito.mock(TrainerWorkloadRequestData.class);
-        String jwtBearerToken = "Bearer jwtTest";
-        ResponseEntity<String> response = ResponseEntity.ok("Training added");
-
-        Mockito.when(jwtService.getTokenForServices(transactionId)).thenReturn(jwtBearerToken);
-        Mockito.when(feignClient.addTraining(jwtBearerToken, requestData)).thenReturn(response);
-
         workloadService.addTraining(transactionId, requestData);
-
-        Mockito.verify(jwtService).getTokenForServices(transactionId);
-        Mockito.verify(feignClient).addTraining(jwtBearerToken, requestData);
+        Mockito.verify(jmsTemplate,Mockito.times(1)).convertAndSend(QUEUE_NAME_ADD, requestData);
     }
 
     @Test
     public void deleteTrainingTest() {
         UUID transactionId = UUID.randomUUID();
         TrainerWorkloadRequestData requestData = Mockito.mock(TrainerWorkloadRequestData.class);
-        String jwtBearerToken = "Bearer jwtTest";
-        ResponseEntity<String> response = ResponseEntity.ok("Training deleted");
-
-        Mockito.when(jwtService.getTokenForServices(transactionId)).thenReturn(jwtBearerToken);
-        Mockito.when(feignClient.deleteTraining(jwtBearerToken, requestData)).thenReturn(response);
-
         workloadService.deleteTraining(transactionId, requestData);
-
-        Mockito.verify(jwtService).getTokenForServices(transactionId);
-        Mockito.verify(feignClient).deleteTraining(jwtBearerToken, requestData);
+        Mockito.verify(jmsTemplate,Mockito.times(1)).convertAndSend(QUEUE_NAME_DELETE, requestData);
     }
 
     @Test
