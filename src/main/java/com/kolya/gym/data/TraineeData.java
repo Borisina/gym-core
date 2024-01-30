@@ -34,6 +34,6 @@ public class TraineeData extends UserData{
         return "TraineeData{" +
                 "dateOfBirth=" + dateOfBirth +
                 ", address='" + address + '\'' +
-                "userData = "+super.toString()+'}';
+                ", userData = "+super.toString()+'}';
     }
 }

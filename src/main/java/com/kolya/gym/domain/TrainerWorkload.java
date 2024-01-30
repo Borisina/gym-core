@@ -14,5 +14,10 @@ public class TrainerWorkload {
         this.workLoad = list;
     }
 
-
+    @Override
+    public String toString() {
+        return "TrainerWorkload{" +
+                "workLoad=" + workLoad +
+                '}';
+    }
 }

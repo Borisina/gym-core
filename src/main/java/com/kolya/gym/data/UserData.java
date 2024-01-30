@@ -1,6 +1,7 @@
 package com.kolya.gym.data;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class UserData {
@@ -45,10 +46,12 @@ public class UserData {
         this.lastName = lastName;
     }
 
+    @JsonIgnore
     public Boolean isActive() {
         return isActive;
     }
 
+    @JsonIgnore
     public void setActive(Boolean active) {
         isActive = active;
     }

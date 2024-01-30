@@ -26,6 +26,6 @@ public class TrainerData extends UserData{
     public String toString() {
         return "TrainerData{" +
                 "specialization=" + specialization +
-                '}';
+                ", userData = "+super.toString()+'}';
     }
 }

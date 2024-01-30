@@ -50,4 +50,14 @@ public class TrainingCriteria {
     public void setTrainingDateTo(Date trainingDateTo) {
         this.trainingDateTo = trainingDateTo;
     }
+
+    @Override
+    public String toString() {
+        return "TrainingCriteria{" +
+                "trainingName='" + trainingName + '\'' +
+                ", trainingType=" + trainingType +
+                ", trainingDateFrom=" + trainingDateFrom +
+                ", trainingDateTo=" + trainingDateTo +
+                '}';
+    }
 }
