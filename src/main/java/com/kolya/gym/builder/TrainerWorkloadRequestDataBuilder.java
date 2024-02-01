@@ -1,5 +1,6 @@
 package com.kolya.gym.builder;
 
+import com.kolya.gym.data.ActionType;
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 
 import java.util.Date;
@@ -38,6 +39,11 @@ public class TrainerWorkloadRequestDataBuilder {
 
     public TrainerWorkloadRequestDataBuilder setTrainingDuration(int duration){
         trainerWorkloadRequestData.setTrainingDuration(duration);
+        return this;
+    }
+
+    public TrainerWorkloadRequestDataBuilder setActionType(ActionType actionType){
+        trainerWorkloadRequestData.setActionType(actionType);
         return this;
     }
 
