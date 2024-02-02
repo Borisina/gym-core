@@ -2,6 +2,7 @@ package com.kolya.gym.service;
 
 import com.kolya.gym.builder.TrainerWorkloadRequestDataBuilder;
 import com.kolya.gym.builder.TrainingDataBuilder;
+import com.kolya.gym.data.ActionType;
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.data.TrainingCriteria;
 import com.kolya.gym.data.TrainingData;
@@ -33,8 +34,8 @@ public class TrainingService {
     public Training create(UUID transactionId, TrainingData trainingData){
         logger.info("Transaction ID: {}, Creating training with data: {}", transactionId, trainingData);
         Training training = getTrainingFromData(transactionId, trainingData);
-        TrainerWorkloadRequestData requestData = trainerWorkloadService.getRequestDataFromTraining(training);
-        trainerWorkloadService.addTraining(transactionId, requestData);
+        TrainerWorkloadRequestData requestData = trainerWorkloadService.getRequestDataFromTraining(training, ActionType.ADD);
+        trainerWorkloadService.changeWorkload(transactionId, requestData);
         training = trainingRepo.save(training);
         logger.info("Transaction ID: {}, Training was created: {}", transactionId, training);
         return training;

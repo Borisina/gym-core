@@ -14,6 +14,8 @@ public class TrainerWorkloadRequestData {
     private Date trainingDate;
     private int trainingDuration;
 
+    private ActionType actionType;
+
     public String getUsername() {
         return username;
     }
@@ -62,6 +64,14 @@ public class TrainerWorkloadRequestData {
         this.trainingDuration = trainingDuration;
     }
 
+    public ActionType getActionType() {
+        return actionType;
+    }
+
+    public void setActionType(ActionType actionType) {
+        this.actionType = actionType;
+    }
+
     @Override
     public String toString() {
         return "TrainerWorkloadRequestData{" +
@@ -71,6 +81,7 @@ public class TrainerWorkloadRequestData {
                 ", isActive=" + isActive +
                 ", trainingDate=" + trainingDate +
                 ", trainingDuration=" + trainingDuration +
+                ", actionType=" + actionType +
                 '}';
     }
 }

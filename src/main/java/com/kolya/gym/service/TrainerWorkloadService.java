@@ -1,6 +1,7 @@
 package com.kolya.gym.service;
 
 import com.kolya.gym.builder.TrainerWorkloadRequestDataBuilder;
+import com.kolya.gym.data.ActionType;
 import com.kolya.gym.data.TrainerWorkloadRequestData;
 import com.kolya.gym.domain.Trainer;
 import com.kolya.gym.domain.TrainerWorkload;
@@ -36,21 +37,13 @@ public class TrainerWorkloadService {
 
     private String jwtBearerToken;
 
-    @Value("${mq.queue.name.add}")
-    private String QUEUE_NAME_ADD;
-    @Value("${mq.queue.name.delete}")
-    private String QUEUE_NAME_DELETE;
+    @Value("${mq.queue.name.workload}")
+    private String QUEUE_NAME_WORKLOAD;
 
-    public void addTraining(UUID transactionId, TrainerWorkloadRequestData requestData) {
-        logger.info("Transaction ID: {}, Try to do send message to the '{}'with data: {}", QUEUE_NAME_ADD, transactionId, requestData);
-        jmsTemplate.convertAndSend(QUEUE_NAME_ADD, requestData);
-        logger.info("Transaction ID: {}, Message sent to '{}'", transactionId, QUEUE_NAME_ADD);
-    }
-
-    public void deleteTraining(UUID transactionId,  TrainerWorkloadRequestData requestData) {
-        logger.info("Transaction ID: {}, Try to do send message to the '{}'with data: {}", QUEUE_NAME_DELETE, transactionId, requestData);
-        jmsTemplate.convertAndSend(QUEUE_NAME_DELETE, requestData);
-        logger.info("Transaction ID: {}, Message sent to '{}'", transactionId, QUEUE_NAME_DELETE);
+    public void changeWorkload(UUID transactionId, TrainerWorkloadRequestData requestData) {
+        logger.info("Transaction ID: {}, Try to do send message to the '{}'with data: {}", QUEUE_NAME_WORKLOAD, transactionId, requestData);
+        jmsTemplate.convertAndSend(QUEUE_NAME_WORKLOAD, requestData);
+        logger.info("Transaction ID: {}, Message sent to '{}'", transactionId, QUEUE_NAME_WORKLOAD);
     }
 
     @HystrixCommand(fallbackMethod = "fallbackGetTrainingWorkload")
@@ -68,7 +61,7 @@ public class TrainerWorkloadService {
         Date now = new Date();
         CollectionUtils.emptyIfNull(trainingSet).stream()
                 .filter(training -> training.getTrainingDate().after(now))
-                .forEach(training -> deleteTraining(transactionId, getRequestDataFromTraining(training)));
+                .forEach(training -> changeWorkload(transactionId, getRequestDataFromTraining(training,ActionType.DELETE)));
     }
 
     public TrainerWorkload fallbackGetTrainingWorkload(UUID transactionId, String  username, Throwable hystrixCommand) throws ServiceUnavailableException {
@@ -77,7 +70,7 @@ public class TrainerWorkloadService {
         throw new ServiceUnavailableException("Sorry, Service is unavailable now.");
     }
 
-    public TrainerWorkloadRequestData getRequestDataFromTraining(Training training){
+    public TrainerWorkloadRequestData getRequestDataFromTraining(Training training, ActionType actionType){
         Trainer trainer = training.getTrainer();
         TrainerWorkloadRequestData requestData = new TrainerWorkloadRequestDataBuilder()
                 .setUsername(trainer.getUser().getUsername())
@@ -86,6 +79,7 @@ public class TrainerWorkloadService {
                 .setTrainingDate(training.getTrainingDate())
                 .setActive(trainer.getUser().isActive())
                 .setTrainingDuration(training.getDuration())
+                .setActionType(actionType)
                 .build();
         return requestData;
     }
