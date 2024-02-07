@@ -61,7 +61,7 @@ public class UserService implements UserDetailsService {
     public String generateUsername(UUID transactionId, String firstName, String lastName){
         logger.info("Transaction ID: {}, Generating username (firstName = {}, lastName = {})", transactionId, firstName, lastName);
         String username = firstName+"."+ lastName;
-        long count = userRepo.countDuplicates(firstName,lastName);
+        long count = userRepo.countDuplicates(username);
         if (count!=0){
             username=username+count;
         }
@@ -103,6 +103,9 @@ public class UserService implements UserDetailsService {
         if (!passwordEncoder.matches(authData.getPassword(),userDetails.getPassword())){
             loginAttemptService.loginFailed(userDetails.getUsername());
             throw new IllegalArgumentException("Wrong password.");
+        }
+        if (!userDetails.isEnabled()){
+            throw new IllegalArgumentException("This user is disabled.");
         }
         return userDetails;
     }

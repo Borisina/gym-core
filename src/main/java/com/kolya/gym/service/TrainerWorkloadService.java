@@ -41,7 +41,7 @@ public class TrainerWorkloadService {
     private String QUEUE_NAME_WORKLOAD;
 
     public void changeWorkload(UUID transactionId, TrainerWorkloadRequestData requestData) {
-        logger.info("Transaction ID: {}, Try to do send message to the '{}'with data: {}", QUEUE_NAME_WORKLOAD, transactionId, requestData);
+        logger.info("Transaction ID: {}, Try to send message to the '{}'with data: {}",transactionId, QUEUE_NAME_WORKLOAD, requestData);
         jmsTemplate.convertAndSend(QUEUE_NAME_WORKLOAD, requestData);
         logger.info("Transaction ID: {}, Message sent to '{}'", transactionId, QUEUE_NAME_WORKLOAD);
     }
