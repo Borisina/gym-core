@@ -78,7 +78,8 @@ public class JwtService {
     public boolean isTokenValid(String token) {
         try{
             String username = extractUsername(token);
-            return (username.equals(userDetailsService.loadUserByUsername(username).getUsername()) && !isTokenExpired(token));
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            return (username.equals(userDetails.getUsername()) && userDetails.isEnabled() && !isTokenExpired(token));
         }catch (SignatureException | UsernameNotFoundException e) {
             return false;
         }

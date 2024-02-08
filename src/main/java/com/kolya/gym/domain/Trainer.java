@@ -38,7 +38,7 @@ public class Trainer{
     private Set<Training> trainingsSet;
 
     @JsonUnwrapped
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "username", referencedColumnName = "username")
     private User user;
 

@@ -53,9 +53,9 @@ public class AuthController {
         try {
             userService.validateUsername(authData.getUsername());
             userDetails = userService.authorize(authData);
-        } catch (IllegalArgumentException e) {
-            logger.info("Transaction ID: {} 400 BAD_REQUEST, {}", transactionId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (IllegalArgumentException  | UsernameNotFoundException e) {
+            logger.info("Transaction ID: {} 400 BAD_REQUEST, Wrong username or password.", transactionId);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Wrong username or password.");
         }catch (ExcessiveAttemptsException e) {
             logger.info("Transaction ID: {} 403 FORBIDDEN, User {}: {}", transactionId, authData.getUsername(), e.getMessage());
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());

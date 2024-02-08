@@ -83,8 +83,9 @@ public class TraineeService {
         logger.info("Transaction ID: {}, Deleting trainee with username {}", transactionId, username);
         Trainee trainee = getByUsername(transactionId, username);
         Set<Training> trainings = trainee.getTrainingsSet();
-        traineeRepo.deleteByUserUsername(username);
         trainerWorkloadService.deleteTrainings(transactionId, trainings);
+        trainee.getUser().setActive(false);
+        traineeRepo.deleteByUserUsername(username);
         logger.info("Transaction ID: {}, Trainee with username {} was deleted", transactionId, username);
         return trainee;
     }

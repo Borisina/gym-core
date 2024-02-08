@@ -54,7 +54,7 @@ public class UserServiceTest {
 
     @Test
     public void testGenerateUsernameSuccess() {
-        when(userRepo.countDuplicates(anyString(), anyString())).thenReturn(0L);
+        when(userRepo.countDuplicates(anyString())).thenReturn(0L);
         String username = userService.generateUsername(UUID.randomUUID(), "firstname", "lastname");
         assertNotNull(username);
     }
