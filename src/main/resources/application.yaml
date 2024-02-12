@@ -3,9 +3,9 @@ spring:
     name: MAIN
   profiles: dev
   datasource:
-    url: jdbc:postgresql://localhost:5432/gym
-    username: postgres
-    password: root
+    url: jdbc:postgresql://postgres:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: false
@@ -29,9 +29,9 @@ brute-force-protector:
 secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
 audience-type: 'service'
 mq:
-  password: 'admin'
-  username: 'admin'
-  url: 'tcp://localhost:61616'
+  password: ${ACTIVEMQ_ADMIN_PASSWORD}
+  username: ${ACTIVEMQ_ADMIN_LOGIN}
+  url: 'tcp://activemq:61616'
   converter:
     type-id-property-name: '_type'
   queue:
@@ -40,11 +40,9 @@ mq:
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka
+      defaultZone: http://eureka-server:8761/eureka
     register-with-eureka: true
     fetch-registry: true
-  instance:
-    hostname: localhost
 
 ---
 
