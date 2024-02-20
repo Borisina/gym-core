@@ -95,3 +95,52 @@ eureka:
 TRAINER-WORKLOAD-SERVICE:
   ribbon:
     listOfServers: http://localhost:8080
+
+---
+
+spring:
+  application:
+    name: MAIN
+  profiles: c-test
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
+server:
+  port: 8086
+auth-bearer-token: 'myBearerToken'
+trainer-workload-service-bearer-token: 'myBearerToken2'
+brute-force-protector:
+  max-attempt: 3
+  block-time-minute: 5
+secret-key: 'mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890mySecretKey1234567890'
+audience-type: 'service'
+mq:
+  password: admin
+  username: admin
+  url: 'tcp://localhost:8199'
+  converter:
+    type-id-property-name: '_type'
+  queue:
+    name:
+      workload: 'trainer-workload-queue'
+eureka:
+  client:
+    enabled: false
+    serviceUrl:
+      defaultZone: http://eureka-server:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
+TRAINER-WORKLOAD-SERVICE:
+  ribbon:
+    listOfServers: http://localhost:8080

@@ -2,6 +2,7 @@ package com.kolya.gym.steps;
 
 import com.kolya.gym.repo.TraineeRepo;
 import com.kolya.gym.repo.TrainerRepo;
+import com.kolya.gym.repo.TrainingRepo;
 import com.kolya.gym.repo.UserRepo;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
@@ -25,6 +26,9 @@ public class CucumberConfig {
     @Autowired
     private UserRepo userRepo;
 
+    @Autowired
+    private TrainingRepo trainingRepo;
+
     private JmsTemplate jmsTemplate;
 
     @Value("${mq.queue.name.workload}")
@@ -34,6 +38,7 @@ public class CucumberConfig {
     @After
     public void deleteTrainers(){
         traineeRepo.deleteAll();
+        trainingRepo.deleteAll();
         trainerRepo.deleteAll();
         userRepo.deleteAll();
     }
@@ -55,8 +60,8 @@ public class CucumberConfig {
 
     @Autowired
     public void setJmsTemplate(JmsTemplate jmsTemplate){
-        int RECEIVE_TIMEOUT = 500;
-        jmsTemplate.setReceiveTimeout(RECEIVE_TIMEOUT);
+        int receiveTimeout = 500;
+        jmsTemplate.setReceiveTimeout(receiveTimeout);
         this.jmsTemplate = jmsTemplate;
     }
 }
