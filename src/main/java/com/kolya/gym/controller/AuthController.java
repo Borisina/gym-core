@@ -2,10 +2,8 @@ package com.kolya.gym.controller;
 
 import com.kolya.gym.data.AuthData;
 import com.kolya.gym.data.ChangePasswordData;
-import com.kolya.gym.domain.User;
 import com.kolya.gym.exception.ExcessiveAttemptsException;
 import com.kolya.gym.service.JwtService;
-import com.kolya.gym.service.LoginAttemptService;
 import com.kolya.gym.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,12 +14,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -75,7 +73,6 @@ public class AuthController {
         UUID transactionId = UUID.randomUUID();
         logger.info("Transaction ID: {} POST /logout was called", transactionId);
         response.addCookie(getExpiredJwtCookie());
-        System.out.println("Expired");
         logger.info("Transaction ID: {} 200 OK, Successful logout", transactionId);
         return ResponseEntity.status(HttpStatus.OK).body("OK");
     }

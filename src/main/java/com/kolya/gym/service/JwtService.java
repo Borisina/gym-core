@@ -77,13 +77,11 @@ public class JwtService {
 
     public boolean isTokenValid(String token) {
         try{
-            String username = extractUsername(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            return (username.equals(userDetails.getUsername()) && userDetails.isEnabled() && !isTokenExpired(token));
+            extractUsername(token);
+            return (!isTokenExpired(token));
         }catch (SignatureException | UsernameNotFoundException e) {
             return false;
         }
-
     }
 
     public String getTokenForServices(UUID transactionId){
