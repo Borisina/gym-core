@@ -3,9 +3,11 @@ package com.kolya.gym.steps;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.WireMockServer;
+import com.kolya.gym.domain.Month;
 import com.kolya.gym.domain.TrainerWorkload;
 import io.cucumber.java.After;
 import io.cucumber.java.Before;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +29,32 @@ public class GetWorkload {
 
     private WireMockServer wireMockServer;
 
+    private TrainerWorkload trainerWorkload;
+
     @Before("@workload")
-    public void setup() throws JsonProcessingException {
+    public void setup(){
         wireMockServer = new WireMockServer();
         wireMockServer.start();
-        TrainerWorkload trainerWorkload = new TrainerWorkload();
-        Map<String, Integer> monthMap = new HashMap<>();
-        monthMap.put("MARCH",30);
-        trainerWorkload.getWorkload().put(2020,monthMap);
         configureFor("localhost", 8080);
-        stubFor(get(urlEqualTo("/trainer-workload/Michail.Kotov"))
-                .willReturn(aResponse()
-                        .withHeader("Content-Type", "application/json")
-                        .withStatus(200)
-                        .withBody(new ObjectMapper().writeValueAsString(trainerWorkload))));
     }
 
     @After("@workload")
     public void stop() {
         wireMockServer.stop();
+    }
+
+
+    @Given("a trainerWorkload \\(trainerUsername {string}, duration {int}, year {int}, month {string}\\), that is saved in the other microservice")
+    public void a_trainerWorkload(String username, int duration, int year, String month ) throws JsonProcessingException {
+        trainerWorkload = new TrainerWorkload();
+        Map<Month, Integer> monthMap = new HashMap<>();
+        monthMap.put(Month.valueOf(month),duration);
+        trainerWorkload.getWorkload().put(year,monthMap);
+        stubFor(get(urlEqualTo("/trainer-workload/"+username))
+                .willReturn(aResponse()
+                        .withHeader("Content-Type", "application/json")
+                        .withStatus(200)
+                        .withBody(new ObjectMapper().writeValueAsString(trainerWorkload))));
     }
 
     @When("^the user tries to get workload by trainer's username \"([^\"]*)\"$")
@@ -62,12 +71,11 @@ public class GetWorkload {
     @Then("^the user should get json workload info$")
     public void the_user_should_get_json_workload_info() {
         String body = scenarioContext.getResponse().getBody();
-        Integer duration = null;
+        TrainerWorkload trainerWorkloadFromResponse = null;
         try {
-            TrainerWorkload trainerWorkload =new ObjectMapper().readValue(body, TrainerWorkload.class);
-            duration = trainerWorkload.getWorkload().get(2020).get("MARCH");
+            trainerWorkloadFromResponse =new ObjectMapper().readValue(body, TrainerWorkload.class);
         } catch (JsonProcessingException ignored) {}
 
-        assertEquals(30, duration);
+        assertEquals(trainerWorkload.getWorkload(), trainerWorkloadFromResponse.getWorkload());
     }
 }
