@@ -1,9 +1,11 @@
 package com.kolya.gym.component.steps;
 
+import org.springframework.context.annotation.Scope;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @Component
+@Scope("cucumber-glue")
 public class ScenarioComponentContext {
     private ResponseEntity<String> response;
     private String jwt;
