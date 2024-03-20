@@ -13,7 +13,7 @@ gym-up:
 	    --env-file .env\
 	    --name gym-container\
 	    --mount type=volume,source=logsvolume,target=/app/logs\
-	     gym-image
+	    gym-image
 
 ## Enter to database console
 shell-db:

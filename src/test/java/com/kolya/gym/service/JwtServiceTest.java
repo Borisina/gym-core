@@ -20,7 +20,6 @@ import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JwtServiceTest {
@@ -66,7 +65,6 @@ public class JwtServiceTest {
 
     @Test
     public void isTokenValidTest() {
-        when(userDetailsService.loadUserByUsername(userDetails.getUsername())).thenReturn(userDetails);
         String token = jwtService.generateToken(UUID.randomUUID(), userDetails);
         assertTrue(jwtService.isTokenValid(token));
     }

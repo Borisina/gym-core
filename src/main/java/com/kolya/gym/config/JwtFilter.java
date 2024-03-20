@@ -22,6 +22,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.security.SignatureException;
+import java.util.ArrayList;
 import java.util.Collections;
 
 @Component
@@ -51,8 +52,7 @@ public class JwtFilter extends OncePerRequestFilter {
             username = jwtService.extractUsernameOrReturnNull(jwt);
         }
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null && jwtService.isTokenValid(jwt)){
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            setAuthenticationForContext(userDetails, request);
+            setAuthenticationForContext(username, request);
         }
 
         filterChain.doFilter(request, response);
@@ -74,9 +74,9 @@ public class JwtFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void setAuthenticationForContext(UserDetails userDetails, HttpServletRequest request){
+    private void setAuthenticationForContext(String username, HttpServletRequest request){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken
-                = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                = new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
         usernamePasswordAuthenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
     }

@@ -19,4 +19,6 @@ public interface TrainerRepo extends CrudRepository<Trainer,Long> {
             "WHERE tt.trainee_id IS NULL " +
             "AND u.is_active=true ")
     List<Trainer> findNotAssignedOnTrainee(String username);
+
+    void deleteByUserUsername(String username);
 }
